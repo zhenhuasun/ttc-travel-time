@@ -109,7 +109,7 @@ RANKINGS_OVERLAY = """<style>
   .ranking-highlights .stat { padding: 22px; }
   .ranking-highlights strong { font-size: 2.6rem; }
   .ranking-highlights span { font-size: 1.05rem; }
-  body::after { content: "Within Tram Reach · tram.camilleroux.com · based on the networks' official timetables";
+  body::after { content: "Within Tram Reach · zhenhuasun.github.io/ttc-travel-time · based on the networks' official timetables";
     position: absolute; left: 0; right: 0; bottom: 44px; text-align: center; color: #3aa70b; font: 600 20px Inter, sans-serif; }
 </style>
 </head>"""
