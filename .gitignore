@@ -3,6 +3,6 @@ __pycache__/
 *.pyc
 .venv/
 
-# Sources brutes (GTFS, communes, OSM) : gardées en local, retéléchargées par fetch_data.py.
-# Leur provenance (URL, date, empreinte SHA-256) est versionnée dans sources/<ville>.json.
+# Raw sources (GTFS, municipalities, OSM): stored locally, re-downloaded by fetch_data.py.
+# Their provenance (URL, date, SHA-256 hash) is versioned in sources/<city>.json.
 /data/
