@@ -70,7 +70,7 @@ def fetch_context(city: dict, out: Path) -> None:
     """Land around the metropolis, for coastal cities: whatever is left uncovered on the map is drawn as sea."""
     departments = city.get("seaDepartments", [])
     if departments:
-        print(f"Communes voisines (départements {', '.join(departments)})…")
+        print(f"Neighbouring municipalities (departments {', '.join(departments)})…")
         features = []
         urls = []
         for code in departments:
@@ -81,7 +81,7 @@ def fetch_context(city: dict, out: Path) -> None:
         record(out, "context.geojson", " + ".join(urls))
     relations = city.get("contextOsmRelations", [])
     if relations:
-        print("Territoires voisins hors de France (OSM)…")
+        print("Neighbouring territories outside France (OSM)…")
         query = "[out:json][timeout:110];(" + "".join(f"relation({rel});" for rel in relations) + ");out geom;"
         (out / "context_osm.json").write_bytes(overpass(query))
         record(out, "context_osm.json", f"Overpass API: {query}")
@@ -90,7 +90,7 @@ def fetch_context(city: dict, out: Path) -> None:
 def fetch_rail(city: dict, out: Path) -> None:
     """Line geometries from OSM, for feeds without shapes. `osmBusRoutes` adds bus lines run like a tram
     (Strasbourg's BHNS G and H), picked by network since other operators reuse the same letters."""
-    print("Tracés des lignes (OSM)…")
+    print("Line geometries (OSM)…")
     area = bbox(city["osmRailBbox"])
     query = f'[out:json][timeout:110];(relation["route"~"^(tram|subway|light_rail|funicular)$"]({area});'
     buses = city.get("osmBusRoutes")
@@ -106,7 +106,7 @@ def fetch_rivers(city: dict, out: Path) -> None:
     """Rivers crossed on foot only by a bridge (`"rivers"`: names, and their « La Loire - Bras de Pirmil » parts)."""
     if not city.get("rivers"):
         return
-    print("Cours d'eau (OSM)…")
+    print("Rivers (OSM)…")
     names = "|".join(re.escape(name) for name in city["rivers"])
     query = (
         f'[out:json][timeout:110];way["waterway"="river"]["name"~"^({names})( - .*)?$"]["tunnel"!~"."]'
@@ -144,8 +144,8 @@ def main() -> None:
     if city.get("gtfsManual"):
         # Some operators (TCL on data.grandlyon.com) require an account: the file is downloaded by hand.
         if not (out / "gtfs.zip").exists():
-            sys.exit(f"Téléchargez le GTFS à la main ({city['gtfsManual']}) et posez-le dans {out / 'gtfs.zip'}")
-        print(f"  fichier manuel conservé ({city['gtfsManual']})")
+            sys.exit(f"Download the GTFS manually ({city['gtfsManual']}) and drop it into {out / 'gtfs.zip'}")
+        print(f"  manual file kept ({city['gtfsManual']})")
         record(out, "gtfs.zip", city["gtfsUrl"], how="manual")
     else:
         (out / "gtfs.zip").write_bytes(download(city["gtfsUrl"]))
@@ -159,7 +159,7 @@ def main() -> None:
     if "--gtfs-only" in sys.argv:
         return
 
-    print(f"Communes de {city['metropole']}…")
+    print(f"Municipalities of {city['metropole']}…")
     if city.get("communesOsm"):
         # Outside France (no EPCI): the municipalities and boroughs are OSM administrative boundaries.
         query = "[out:json][timeout:110];(" + "".join(f"relation({rel});" for rel in city["communesOsm"]) + ");out geom;"
@@ -170,7 +170,7 @@ def main() -> None:
         (out / "communes.geojson").write_bytes(download(communes_url))
         record(out, "communes.geojson", communes_url)
     if city.get("arrondissements"):
-        print("Arrondissements municipaux…")
+        print("Municipal arrondissements…")
         url = (f"https://geo.api.gouv.fr/communes?type=arrondissement-municipal&codeParent={city['arrondissements']}"
                "&fields=nom,code&format=geojson&geometry=contour")
         (out / "arrondissements.geojson").write_bytes(download(url))
@@ -179,7 +179,7 @@ def main() -> None:
     if city.get("railGeometry") == "osm":
         fetch_rail(city, out)
 
-    print("Eau et parcs (OSM)…")
+    print("Water and parks (OSM)…")
     area, parks = bbox(city["osmBbox"]), bbox(city["parksBbox"])
     query = (
         "[out:json][timeout:180];("

@@ -2,7 +2,7 @@
   "city": "Besançon",
   "builtAt": "2026-10-05T16:55:01+00:00",
   "referenceDate": "2026-10-06",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "Ginko",
     "dataset": "https://transport.data.gouv.fr/datasets/gtfs-et-siri-du-reseau-ginko-besancon-lignes-urbaines-et-periurbaines",

@@ -2,7 +2,7 @@
   "city": "Nantes",
   "builtAt": "2026-10-06T00:53:53+00:00",
   "referenceDate": "2026-11-03",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "Naolib",
     "dataset": "https://transport.data.gouv.fr/datasets/reseau-de-transports-collectifs-naolib",

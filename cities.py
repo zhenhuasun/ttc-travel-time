@@ -13,9 +13,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 CITIES_DIR = ROOT / "cities"
 
-RAIL_NOUN = {"tram": "tram", "metro": "métro", "metro+tram": "métro et tram"}
-RAIL_LABEL = {"tram": "Tram", "metro": "Métro", "metro+tram": "Métro et tram"}
-RAIL_STATIONS = {"tram": "stations de tram", "metro": "stations de métro", "metro+tram": "stations de métro et de tram"}
+RAIL_NOUN = {"tram": "tram", "metro": "subway", "metro+tram": "subway and tram"}
+RAIL_LABEL = {"tram": "Tram", "metro": "Subway", "metro+tram": "Subway and tram"}
+RAIL_STATIONS = {"tram": "tram stations", "metro": "subway stations", "metro+tram": "subway and tram stations"}
 # Half-sizes (degrees of latitude, longitude) of the OSM areas around the centre.
 OSM_HALF_SIZE = (0.22, 0.32)
 PARKS_HALF_SIZE = (0.06, 0.08)
@@ -33,11 +33,11 @@ def with_defaults(raw: dict) -> dict:
     city.setdefault("railNoun", RAIL_NOUN[kind])
     city.setdefault("railLabel", RAIL_LABEL[kind])
     city.setdefault("railStations", RAIL_STATIONS[kind])
-    city.setdefault("title", f"{city['name']} à portée de {'tram' if kind == 'tram' else 'métro'}")
-    city.setdefault("titleSuffix", f"Temps de trajet en {city['railNoun']} {city['network']}")
+    city.setdefault("title", f"{city['name']} by {'tram' if kind == 'tram' else 'subway'}")
+    city.setdefault("titleSuffix", f"Travel times by {city['railNoun']} — {city['network']}")
     city.setdefault("busNoun", "bus")
     city.setdefault("busLabel", "Bus")
-    city.setdefault("area", "de la Métropole" if "métropole" in city["metropole"].lower() else "de l'agglomération")
+    city.setdefault("area", "of the metro area" if "métropole" in city["metropole"].lower() else "of the urban area")
     city.setdefault("railGeometry", "gtfs")
     # Outside France (`country`), no Base Adresse Nationale: addresses are looked up in OSM through Photon.
     city.setdefault("country", "FR")
@@ -50,8 +50,8 @@ def with_defaults(raw: dict) -> dict:
     city.setdefault("osmRailBbox", city["osmBbox"])
     city.setdefault(
         "ogAlt",
-        f"Carte de {city['name']} colorée selon le temps de trajet en {city['railNoun']} depuis "
-        f"{lowercase_first(city['defaultFrom']['label'])}, avec les isochrones 15 et 30 minutes.",
+        f"Map of {city['name']} colored by travel time by {city['railNoun']} from "
+        f"{lowercase_first(city['defaultFrom']['label'])}, with 15- and 30-minute isochrones.",
     )
     return city
 

@@ -25,9 +25,9 @@ X_URL = "https://x.com/CamilleRoux"
 LINKEDIN_URL = "https://www.linkedin.com/in/camilleroux"
 BLUESKY_URL = "https://bsky.app/profile/camilleroux.com"
 AUTHOR_URL = "https://www.camilleroux.com/"
-SITE_NAME = "À portée de tram"
+SITE_NAME = "Within Tram Reach"
 ANALYTICS = (
-    '    <!-- Cloudflare Web Analytics (sans cookie). "spa": false : les mises à jour de l\'URL ne comptent pas comme des pages vues. -->\n'
+    '    <!-- Cloudflare Web Analytics (cookie-free). "spa": false: URL updates don\'t count as page views. -->\n'
     '    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
     "data-cf-beacon='{\"token\": \"1904c17ed0624c0cab4d69ea1bacc5e7\", \"spa\": false}'></script>"
 )
@@ -36,18 +36,19 @@ LICENCES = {
     "odbl": ("ODbL", "https://opendatacommons.org/licenses/odbl/1-0/"),
     "mobilites": ("Licence Mobilités", "https://wiki.lafabriquedesmobilites.fr/wiki/Licence_Mobilit%C3%A9s"),
     "ccby": ("CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/deed.fr"),
+    "togl": ("Open Government Licence – Toronto", "https://open.toronto.ca/open-data-licence/"),
 }
 GEO_CREDITS = {
-    "ban": '<a href="https://geo.api.gouv.fr/">contours communaux</a>, recherche d\'adresse via la\n'
+    "ban": '<a href="https://geo.api.gouv.fr/">municipal boundaries</a>, address search via the\n'
     '          <a href="https://adresse.data.gouv.fr/">Base Adresse Nationale</a>.',
-    "photon": 'limites administratives OpenStreetMap, recherche d\'adresse via\n'
-    '          <a href="https://photon.komoot.io/">Photon</a> (komoot, données OpenStreetMap).',
+    "photon": 'OpenStreetMap administrative boundaries, address search via\n'
+    '          <a href="https://photon.komoot.io/">Photon</a> (komoot, OpenStreetMap data).',
 }
 ODBL_URL = "https://opendatacommons.org/licenses/odbl/1-0/"
-MODE_LABEL_SHORT = {"tram": "Tram", "metro": "Métro", "metro+tram": "Métro et tram"}
-MODE_NAMES = {"metro": "Métro", "rer": "RER", "train": "Train", "tram": "Tram", "funicular": "Funiculaire", "cable": "Téléphérique", "busway": "Busway", "bhns": "BHNS"}
-MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
-WEEKDAYS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+MODE_LABEL_SHORT = {"tram": "Tram", "metro": "Subway", "metro+tram": "Subway and tram"}
+MODE_NAMES = {"metro": "Subway", "rer": "RER", "train": "Train", "tram": "Tram", "funicular": "Funicular", "cable": "Cable car", "busway": "Busway", "bhns": "BHNS"}
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 esc = html.escape
 
@@ -64,13 +65,13 @@ def line_badge(color: str, name: str) -> str:
 
 
 def thousands(value: int) -> str:
-    """French thousands separator: 2445 → « 2 445 » (narrow no-break space)."""
-    return f"{value:,}".replace(",", "\u202f")
+    """English thousands separator: 2445 → "2,445"."""
+    return f"{value:,}"
 
 
 def num(value: float) -> str:
-    """French decimal comma: 4.4 → « 4,4 »."""
-    return f"{value:g}".replace(".", ",")
+    """English decimal point: 4.4 → "4.4"."""
+    return f"{value:g}"
 
 
 def short_hash(path: Path) -> str:
@@ -89,7 +90,7 @@ def load_built_cities() -> list[dict]:
     for city in load_cities():
         sources = ROOT / "sources" / f"{city['slug']}.json"
         if not sources.exists() or not (SITE / "data" / f"{city['slug']}.json").exists():
-            print(f"  {city['slug']} ignorée : lancer d'abord build_data.py {city['slug']}")
+            print(f"  {city['slug']} skipped: run build_data.py {city['slug']} first")
             continue
         city["sources"] = json.loads(sources.read_text(encoding="utf-8"))
         city["stats"] = city["sources"]["stats"]
@@ -106,7 +107,7 @@ def head(*, title: str, description: str, url: str, base: str, image: str, image
     """<head> content shared by every page: SEO, social previews, structured data."""
     redirect = (
         "    <script>\n"
-        "      // Anciens liens github.io : on renvoie vers le domaine du site en gardant départ et arrivée.\n"
+        "      // Old github.io links: redirect to the site domain, keeping origin and destination.\n"
         f'      if (location.hostname.endsWith("github.io")) location.replace("{url}" + location.search);\n'
         "    </script>"
     )
@@ -126,7 +127,7 @@ def head(*, title: str, description: str, url: str, base: str, image: str, image
             '    <meta name="author" content="Camille Roux" />',
             f'    <link rel="author" href="{AUTHOR_URL}" />',
             '    <meta property="og:type" content="website" />',
-            '    <meta property="og:locale" content="fr_FR" />',
+            '    <meta property="og:locale" content="en_US" />',
             f'    <meta property="og:site_name" content="{SITE_NAME}" />',
             f'    <meta property="og:title" content="{title_text}" />',
             f'    <meta property="og:description" content="{esc(description)}" />',
@@ -150,10 +151,10 @@ def head(*, title: str, description: str, url: str, base: str, image: str, image
 
 def header(base: str) -> str:
     return f"""    <header class="topbar">
-      <nav class="topbar-inner" aria-label="Navigation principale">
+      <nav class="topbar-inner" aria-label="Main navigation">
         <a class="brand" href="{base}"><img src="{base}favicon.svg" width="22" height="22" alt="" /> {SITE_NAME}</a>
         <div class="topbar-links">
-          <a class="topbar-link" href="{base}{RANKINGS_DIR}/">🏆 Classements</a>
+          <a class="topbar-link" href="{base}{RANKINGS_DIR}/">🏆 Rankings</a>
           <a class="topbar-link" href="{AUTHOR_URL}" rel="author">camilleroux.com</a>
         </div>
       </nav>
@@ -165,25 +166,25 @@ def footer(cities: list[dict], base: str, data_credit: str, geocoder: str = "ban
     return f"""    <footer class="site-footer">
       <div class="footer-inner">
         <p class="footer-author">
-          Un projet de <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, développeur et co-fondateur de Human Coders,
-          à Montpellier, d'après l'idée d'Anthony Castrio et de Jules Grandin. Découvrez
-          <a href="{AUTHOR_URL}realisations/">ses autres réalisations</a> et sa
-          <a href="{AUTHOR_URL}veille/">veille tech hebdomadaire</a>.
+          A project by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, developer and co-founder of Human Coders,
+          in Montpellier, based on the idea by Anthony Castrio and Jules Grandin. See
+          <a href="{AUTHOR_URL}realisations/">his other projects</a> and his
+          <a href="{AUTHOR_URL}veille/">weekly tech watch</a>.
         </p>
-        <p class="footer-links">Villes&nbsp;: {links}</p>
+        <p class="footer-links">Cities: {links}</p>
         <p class="footer-links">
-          <a href="{GITHUB_URL}" rel="noopener">Code source sur GitHub</a> ·
-          <a href="{GITHUB_URL}/issues" rel="noopener">Proposer une ville ou signaler une erreur</a> ·
-          <a href="{base}classements/">Classements</a> ·
-          <a href="{base}mentions-legales/">Mentions légales et licences</a>
+          <a href="{GITHUB_URL}" rel="noopener">Source code on GitHub</a> ·
+          <a href="{GITHUB_URL}/issues" rel="noopener">Suggest a city or report an error</a> ·
+          <a href="{base}rankings/">Rankings</a> ·
+          <a href="{base}mentions-legales/">Legal notice and licenses</a>
         </p>
         <p class="footer-credits">
-          Idée originale&nbsp;: le <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> d'Anthony Castrio,
-          adapté ensuite à Paris par Jules Grandin
+          Original idea: Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>,
+          later adapted to Paris by Jules Grandin
           (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>).
-          {data_credit} Fond de carte © <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>,
+          {data_credit} Basemap © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>,
           {GEO_CREDITS[geocoder]}
-          Données calculées publiées sous licence <a href="{ODBL_URL}">ODbL</a>, code sous licence MIT.
+          Computed data published under the <a href="{ODBL_URL}">ODbL</a> license, code under the MIT license.
         </p>
       </div>
     </footer>"""
@@ -203,15 +204,15 @@ LINKEDIN_ICON = (
 
 def follow_note() -> str:
     """Under the list of cities: where the next ones are announced, and where to ask for one."""
-    return f"""        <aside class="follow-card" aria-label="Nouvelles villes">
+    return f"""        <aside class="follow-card" aria-label="New cities">
           <div class="follow-text">
-            <p class="follow-title">Suivre les nouvelles villes</p>
-            <p>Chaque nouvelle ville est annoncée sur X et LinkedIn. La vôtre n'est pas encore là&nbsp;?
-            <a href="{GITHUB_URL}/issues" rel="noopener">Proposez-la sur GitHub</a>.</p>
+            <p class="follow-title">Follow new cities</p>
+            <p>Every new city is announced on X and LinkedIn. Yours isn't there yet?
+            <a href="{GITHUB_URL}/issues" rel="noopener">Suggest it on GitHub</a>.</p>
           </div>
           <div class="follow-actions">
-            <a class="button follow-x" href="{X_URL}" rel="me noopener">{X_ICON} Suivre sur X</a>
-            <a class="button follow-linkedin" href="{LINKEDIN_URL}" rel="me noopener">{LINKEDIN_ICON} Suivre sur LinkedIn</a>
+            <a class="button follow-x" href="{X_URL}" rel="me noopener">{X_ICON} Follow on X</a>
+            <a class="button follow-linkedin" href="{LINKEDIN_URL}" rel="me noopener">{LINKEDIN_ICON} Follow on LinkedIn</a>
           </div>
         </aside>"""
 
@@ -236,17 +237,17 @@ def faq_schema(entries: list[tuple]) -> dict:
 def credits_entry(question: str) -> tuple:
     """« Who made this? »: the original authors first, then the author of these maps."""
     text = (
-        "L'idée vient du NYC Transit Time Cartogram d'Anthony Castrio, adapté ensuite à Paris par Jules Grandin "
-        "(« C'est encore loin ? »). Ces cartes sont réalisées par Camille Roux, développeur et co-fondateur de Human "
-        "Coders à Montpellier, qui présente ses autres réalisations et sa veille tech hebdomadaire sur camilleroux.com. Le "
-        "code est ouvert sur GitHub."
+        "The idea comes from Anthony Castrio's NYC Transit Time Cartogram, later adapted to Paris by Jules Grandin "
+        '("C\'est encore loin ?"). These maps are made by Camille Roux, developer and co-founder of Human '
+        "Coders in Montpellier, who showcases his other projects and his weekly tech watch on camilleroux.com. The "
+        "code is open on GitHub."
     )
     html_text = (
-        'L\'idée vient du <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> d\'Anthony Castrio, adapté '
-        'ensuite à Paris par Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C\'est encore '
-        f'loin&nbsp;?</a>). Ces cartes sont réalisées par <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, développeur '
-        f'et co-fondateur de Human Coders à Montpellier&nbsp;: découvrez <a href="{AUTHOR_URL}realisations/">ses autres '
-        f'réalisations</a> et <a href="{AUTHOR_URL}veille/">sa veille tech hebdomadaire</a>. Le code est ouvert sur '
+        'The idea comes from <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> by Anthony Castrio, later '
+        'adapted to Paris by Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C\'est encore '
+        f'loin&nbsp;?</a>). These maps are made by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, developer '
+        f'and co-founder of Human Coders in Montpellier: see <a href="{AUTHOR_URL}realisations/">his other '
+        f'projects</a> and <a href="{AUTHOR_URL}veille/">his weekly tech watch</a>. The code is open on '
         f'<a href="{GITHUB_URL}">GitHub</a>.'
     )
     return (question, text, html_text)
@@ -259,7 +260,7 @@ def author_schema() -> dict:
         "name": "Camille Roux",
         "url": AUTHOR_URL,
         "image": AUTHOR_URL + "content/images/size/w256h256/format/jpeg/2025/05/camillecouleur---lowres-2.jpg",
-        "jobTitle": "Développeur, co-fondateur de Human Coders",
+        "jobTitle": "Developer, co-founder of Human Coders",
         "worksFor": {"@type": "Organization", "name": "Human Coders", "url": "https://www.humancoders.com/"},
         "address": {"@type": "PostalAddress", "addressLocality": "Montpellier", "addressCountry": "FR"},
         "sameAs": [
@@ -272,17 +273,17 @@ def author_schema() -> dict:
     }
 
 
-# « en France, en Belgique et au Québec »: where the cities are, for the home page.
-COUNTRY_IN = {"FR": "en France", "BE": "en Belgique", "CA": "au Québec", "CH": "en Suisse", "LU": "au Luxembourg"}
+# « in France, in Belgium and in Quebec »: where the cities are, for the home page.
+COUNTRY_IN = {"FR": "in France", "BE": "in Belgium", "CA": "in Quebec", "CH": "in Switzerland", "LU": "in Luxembourg"}
 
 
 def city_count(cities: list[dict]) -> str:
-    """« 23 villes françaises », then « 27 villes en France, en Belgique et au Québec » once there are cities abroad."""
+    """« 27 French cities », then « 27 cities in France, in Belgium and in Quebec » once there are cities abroad."""
     countries = sorted({city["country"] for city in cities}, key=list(COUNTRY_IN).index)
     if countries == ["FR"]:
-        return f"{len(cities)} villes françaises"
+        return f"{len(cities)} French cities"
     places = [COUNTRY_IN[country] for country in countries]
-    return f"{len(cities)} villes " + ", ".join(places[:-1]) + f" et {places[-1]}"
+    return f"{len(cities)} cities " + ", ".join(places[:-1]) + f" and {places[-1]}"
 
 
 def city_card(city: dict, base: str, heading: str = "h3") -> str:
@@ -291,7 +292,7 @@ def city_card(city: dict, base: str, heading: str = "h3") -> str:
             <img src="{base}og/thumb-{city['slug']}.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
               <{heading}>{esc(city['title'])}</{heading}>
-              <span>{stats['within30']}&nbsp;% des {esc(city['railStations'])} à moins de 30&nbsp;min du centre ({esc(stats['center'])}) · réseau {esc(city['network'])}</span>
+              <span>{stats['within30']}% of {esc(city['railStations'])} within 30 min of downtown ({esc(stats['center'])}) · {esc(city['network'])} network</span>
             </span>
           </a>"""
 
@@ -300,42 +301,42 @@ def city_faq(city: dict) -> list[tuple]:
     stats, sources = city["stats"], city["sources"]
     name, rail = city["name"], city["railNoun"]
     lines = stats["lines"]
-    headways = ", ".join(f"{MODE_NAMES.get(line['mode'], 'ligne').lower()} {line['name']} : {num(line['headway'])} min" for line in lines)
+    headways = ", ".join(f"{MODE_NAMES.get(line['mode'], 'line').lower()} {line['name']}: {num(line['headway'])} min" for line in lines)
     fastest = min(lines, key=lambda line: line["headway"])
     period = sources["gtfs"].get("servicePeriod") or [None, None]
     fetched = sources["gtfs"].get("fetchedAt")
     return [
         (
-            f"Combien de temps faut-il pour traverser {name} en {rail} ?",
-            f"Depuis le centre ({stats['center']}), {stats['within15']} % des {city['railStations']} sont à moins de 15 minutes et "
-            f"{stats['within30']} % à moins de 30 minutes, marche et attente comprises. La plus éloignée, {stats['farthestStation']}, "
-            f"est à environ {stats['farthestMinutes']} minutes.",
+            f"How long does it take to cross {name} by {rail}?",
+            f"From downtown ({stats['center']}), {stats['within15']}% of {city['railStations']} are within 15 minutes and "
+            f"{stats['within30']}% within 30 minutes, walking and waiting included. The farthest, {stats['farthestStation']}, "
+            f"is about {stats['farthestMinutes']} minutes away.",
         ),
         (
-            f"Quelle est la fréquence des lignes de {rail} à {name} ?",
-            f"En journée de semaine, l'intervalle moyen entre deux passages est de {headways}. La ligne la plus fréquente "
-            f"est la {fastest['name']}, avec un passage toutes les {num(fastest['headway'])} minutes environ.",
+            f"How frequent are the {rail} lines in {name}?",
+            f"On a weekday during the day, the average interval between two services is {headways}. The most frequent "
+            f"line is {fastest['name']}, with a service about every {num(fastest['headway'])} minutes.",
         ),
         (
-            "D'où viennent les horaires utilisés ?",
-            f"Des horaires théoriques publiés par le réseau {city['network']} (format GTFS, {LICENCES[city['gtfsLicence']][0]})"
-            + (f", téléchargés le {french_date(fetched)}" if fetched else "")
-            + (f" et valables jusqu'au {french_date(period[1])}" if period[1] else "")
-            + f". Les temps correspondent au {french_date(sources['referenceDate'], weekday=True)}, entre 7 h et 20 h.",
+            "Where do the timetables used come from?",
+            f"From the scheduled timetables published by the {city['network']} network (GTFS format, {LICENCES[city['gtfsLicence']][0]})"
+            + (f", downloaded on {french_date(fetched)}" if fetched else "")
+            + (f" and valid until {french_date(period[1])}" if period[1] else "")
+            + f". Travel times are for {french_date(sources['referenceDate'], weekday=True)}, between 7 a.m. and 8 p.m.",
         ),
         (
-            f"Les bus sont-ils pris en compte à {name} ?",
-            f"Oui, en option : cochez « {city['busLabel']} » sous la carte. Par défaut, seuls les {rail} sont affichés. "
-            "L'attente aux arrêts de bus peu fréquentés est plafonnée à 15 minutes.",
+            f"Are buses included in {name}?",
+            f"Yes, optionally: check \"{city['busLabel']}\" under the map. By default, only {rail} are shown. "
+            "Waiting time at infrequent bus stops is capped at 15 minutes.",
         ),
         (
-            "Comment les temps de trajet sont-ils calculés ?",
-            "Pour chaque trajet : marche jusqu'à l'arrêt à 4,5 km/h, attente égale à la moitié de l'intervalle entre deux "
-            "passages, durée prévue entre les arrêts, correspondances avec 1,5 minute de marche"
-            + (", et 1 minute pour rejoindre le quai du métro" if any(line["mode"] == "metro" for line in lines) else "")
-            + ". Pas de temps réel ni de perturbations : c'est la ville « sur le papier ».",
+            "How are travel times calculated?",
+            "For each trip: walk to the stop at 4.5 km/h, waiting time equal to half the interval between two "
+            "services, scheduled time between stops, transfers with 1.5 minutes of walking"
+            + (", plus 1 minute to reach the subway platform" if any(line["mode"] == "metro" for line in lines) else "")
+            + '. No real-time data or disruptions: this is the city "on paper".',
         ),
-        credits_entry(f"Qui a réalisé cette carte de {name} ?"),
+        credits_entry(f"Who made this map of {name}?"),
     ]
 
 
@@ -344,11 +345,11 @@ def ranking_positions_block(cities: list[dict], city: dict) -> str:
     if not items:
         return ""
     lines = "\n".join(f"          {item}" for item in items)
-    return f"""        <h3 class="ranking-positions-title">🏆 {esc(city["name"])} dans les classements</h3>
+    return f"""        <h3 class="ranking-positions-title">🏆 {esc(city["name"])} in the rankings</h3>
         <ul class="ranking-positions">
 {lines}
         </ul>
-        <p class="section-link"><a href="../{RANKINGS_DIR}/">Tous les classements des trams et métros de France →</a></p>"""
+        <p class="section-link"><a href="../{RANKINGS_DIR}/">All French tram and subway rankings →</a></p>"""
 
 
 def original_map(city: dict) -> str:
@@ -358,10 +359,10 @@ def original_map(city: dict) -> str:
         return ""
     return f"""        <aside class="original-map">
           <p>
-            <strong>La carte originale, c'est celle de {esc(original["author"])}&nbsp;:</strong>
-            <a href="{esc(original["url"])}">{esc(original["title"]).replace(" ?", "&nbsp;?")}</a>, en {esc(original["modes"])}, qui a
-            inspiré tout ce site (elle-même partie du <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>
-            d'Anthony Castrio). Allez la voir&nbsp;! Cette version-ci part des horaires {esc(city["network"])} et ajoute
+            <strong>The original map is {esc(original["author"])}'s:</strong>
+            <a href="{esc(original["url"])}">{esc(original["title"]).replace(" ?", "&nbsp;?")}</a>, in {esc(original["modes"])}, which
+            inspired this whole site (itself part of Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>).
+            Go see it! This version starts from the {esc(city["network"])} timetables and adds
             {esc(original["adds"])}.
           </p>
         </aside>
@@ -374,8 +375,8 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
     stats = city["stats"]
     rail_noun = city["railNoun"]
     description = (
-        f"Carte des temps de trajet en {rail_noun} à {city['name']} : choisissez un départ, toute la ville se colore "
-        f"selon le temps qu'il faut pour y aller (réseau {city['network']})."
+        f"{rail_noun} travel-time map of {city['name']}: pick a starting point and the whole city is colored "
+        f"by how long it takes to get there ({city['network']} network)."
     )
     faq = city_faq(city)
     graph = [
@@ -384,7 +385,7 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
             "name": city["title"],
             "url": url,
             "description": description,
-            "inLanguage": "fr",
+            "inLanguage": "en",
             "applicationCategory": "TravelApplication",
             "operatingSystem": "Web",
             "isAccessibleForFree": True,
@@ -407,10 +408,10 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
     ]
     fastest = min(stats["lines"], key=lambda line: line["headway"])
     tiles = [
-        (f"{stats['within30']} %", f"des {city['railStations']} à moins de 30 min du centre ({stats['center']})"),
+        (f"{stats['within30']}%", f"of {city['railStations']} within 30 min of downtown ({stats['center']})"),
         (str(stats["railStations"]), city["railStations"]),
-        (f"{num(fastest['headway'])} min", f"entre deux passages sur la ligne {fastest['name']}, la plus fréquente"),
-        (f"{stats['farthestMinutes']} min", f"depuis le centre pour rejoindre {stats['farthestStation']}, la station la plus éloignée"),
+        (f"{num(fastest['headway'])} min", f"between services on line {fastest['name']}, the most frequent"),
+        (f"{stats['farthestMinutes']} min", f"from downtown to {stats['farthestStation']}, the farthest station"),
     ]
     stat_tiles = "\n".join(f'          <div class="stat"><strong>{esc(value)}</strong><span>{esc(label)}</span></div>' for value, label in tiles)
     line_rows = "\n".join(
@@ -429,7 +430,7 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
     rest = esc(city["title"][len(city["name"]):])
     headline = (
         f'<button id="cityTrigger" type="button" class="city-trigger" aria-haspopup="dialog" aria-expanded="false" '
-        f'title="Changer de ville">{esc(city["name"])}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg></button>'
+        f'title="Switch city">{esc(city["name"])}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg></button>'
         + "&nbsp;".join(rest.rsplit(" ", 1))
     )
     config = {
@@ -443,8 +444,8 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
         "geocoder": city["geocoder"],
         "searchBbox": city["osmBbox"],
     }
-    feeds = " et ".join(f'<a href="{esc(feed["dataset"])}">GTFS {esc(feed["network"])}</a>' for feed in gtfs_feeds(city))
-    data_credit = f'Horaires&nbsp;: {feeds} ({esc(city["metropole"])}).'
+    feeds = " and ".join(f'<a href="{esc(feed["dataset"])}">GTFS {esc(feed["network"])}</a>' for feed in gtfs_feeds(city))
+    data_credit = f'Timetables: {feeds} ({esc(city["metropole"])}).'
 
     values = {
         "head": head(
@@ -466,7 +467,7 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
         "original_map": original_map(city),
         "headline": headline,
         "name": esc(city["name"]),
-        "area": esc(city.get("area", "de la Métropole")),
+        "area": esc(city.get("area", "of the metro area")),
         "rail_noun": esc(rail_noun),
         "rail_label": esc(city["railLabel"]),
         "bus_label": esc(city["busLabel"]),
@@ -485,35 +486,35 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
 
 
 def render_home(template: Template, cities: list[dict]) -> str:
-    names = ", ".join(city["name"] for city in cities[:-1]) + f" et {cities[-1]['name']}"
+    names = ", ".join(city["name"] for city in cities[:-1]) + f" and {cities[-1]['name']}"
     networks = ", ".join(f"{city['network']} ({city['name']})" for city in cities)
-    description = f"Cartes des temps de trajet en tram et métro à {names} : la ville se colore selon le temps pour y aller."
+    description = f"Tram and subway travel-time maps for {names}: the city is colored by how long it takes to get there."
     faq = [
         (
-            "D'où viennent les temps de trajet ?",
-            f"Des horaires théoriques officiels de chaque réseau ({networks}), publiés en open data au format GTFS. "
-            "Ils correspondent à un jour de semaine ordinaire, entre 7 h et 20 h.",
+            "Where do the travel times come from?",
+            f"From the official scheduled timetables of each network ({networks}), published as open data in GTFS format. "
+            "They cover an ordinary weekday, between 7 a.m. and 8 p.m.",
         ),
         (
-            "Les temps affichés sont-ils fiables ?",
-            "Ce sont des moyennes « sur le papier » : marche jusqu'à l'arrêt, attente égale à la moitié de l'intervalle entre "
-            "deux passages, durée prévue entre les arrêts et correspondances. Pas de temps réel ni de perturbations.",
+            "Are the displayed times reliable?",
+            'These are "on paper" averages: walk to the stop, waiting time equal to half the interval between '
+            "two services, scheduled time between stops, and transfers. No real-time data or disruptions.",
         ),
         (
-            "Le bus est-il pris en compte ?",
-            "Oui, en option sur chaque carte. Par défaut, seuls le tram, le métro et les transports guidés sont affichés, "
-            "pour montrer l'ossature du réseau.",
+            "Are buses included?",
+            "Yes, optionally on each map. By default, only trams, subways and guided transit are shown, "
+            "to highlight the backbone of the network.",
         ),
         (
-            "Ma ville n'y est pas, pourquoi ?",
-            "Il faut un réseau de tram ou de métro et des horaires publiés en open data. Les prochaines villes sont ajoutées "
-            "au fur et à mesure : vous pouvez en proposer une sur GitHub, et chaque nouvelle ville est annoncée sur X "
-            "et LinkedIn.",
-            "Il faut un réseau de tram ou de métro et des horaires publiés en open data. Les prochaines villes sont ajoutées "
-            f'au fur et à mesure&nbsp;: vous pouvez en <a href="{GITHUB_URL}/issues">proposer une sur GitHub</a>, et chaque '
-            f'nouvelle ville est annoncée sur <a href="{X_URL}">X</a> et <a href="{LINKEDIN_URL}">LinkedIn</a>.',
+            "My city isn't there — why?",
+            "It needs a tram or subway network with timetables published as open data. New cities are added "
+            "over time: you can suggest one on GitHub, and each new city is announced on X "
+            "and LinkedIn.",
+            "It needs a tram or subway network with timetables published as open data. New cities are added "
+            f'over time: you can <a href="{GITHUB_URL}/issues">suggest one on GitHub</a>, and each '
+            f'new city is announced on <a href="{X_URL}">X</a> and <a href="{LINKEDIN_URL}">LinkedIn</a>.',
         ),
-        credits_entry("Qui a réalisé ce site ?"),
+        credits_entry("Who made this site?"),
     ]
     graph = [
         {
@@ -522,12 +523,12 @@ def render_home(template: Template, cities: list[dict]) -> str:
             "name": SITE_NAME,
             "url": SITE_URL,
             "description": description,
-            "inLanguage": "fr",
+            "inLanguage": "en",
             "author": {"@id": AUTHOR_URL + "#me"},
         },
         {
             "@type": "ItemList",
-            "name": "Cartes des temps de trajet par ville",
+            "name": "Travel-time maps by city",
             "itemListElement": [
                 {"@type": "ListItem", "position": i + 1, "name": city["title"], "url": SITE_URL + city["path"]}
                 for i, city in enumerate(cities)
@@ -539,17 +540,17 @@ def render_home(template: Template, cities: list[dict]) -> str:
     published = min(city["published"] for city in cities)
     values = {
         "head": head(
-            title=f"{SITE_NAME} · Temps de trajet en tram et métro par ville",
+            title=f"{SITE_NAME} · Tram and subway travel times by city",
             description=description,
             url=SITE_URL,
             base="./",
             image=SITE_URL + "og/home.jpg?v=" + short_hash(SITE / "og" / "home.jpg"),
-            image_alt=f"Cartes des temps de trajet en tram et métro à {names}.",
+            image_alt=f"Tram and subway travel-time maps for {names}.",
             published=published,
             graph=graph,
         ),
         "header": header("./"),
-        "footer": footer(cities, "./", "Horaires&nbsp;: GTFS des réseaux de chaque ville (détail dans les mentions légales)."),
+        "footer": footer(cities, "./", "Timetables: GTFS feeds from each city's network (details in the legal notice)."),
         "analytics": ANALYTICS,
         "city_count": city_count(cities),
         "city_cards": "\n".join(city_card(city, "./", "h2") for city in cities),
@@ -578,7 +579,7 @@ def gtfs_feeds(city: dict) -> list[dict]:
 
 
 def render_legal(cities: list[dict]) -> str:
-    """Mentions légales (LCEN) and the licence of every source."""
+    """Legal notice and the licence of every source."""
     rows = "\n".join(
         f'          <tr><td>{esc(city["name"])}</td><td><a href="{esc(feed["dataset"])}">GTFS {esc(feed["network"])}</a></td>'
         f'<td><a href="{LICENCES[feed["licence"]][1]}">{LICENCES[feed["licence"]][0]}</a></td>'
@@ -587,7 +588,7 @@ def render_legal(cities: list[dict]) -> str:
         for feed in gtfs_feeds(city)
     )
     rows += "".join(
-        f'\n          <tr><td>{esc(city["city"])} (classements)</td><td><a href="{esc(city["source"]["dataset"])}">GTFS {esc(city["network"])}</a></td>'
+        f'\n          <tr><td>{esc(city["city"])} (rankings)</td><td><a href="{esc(city["source"]["dataset"])}">GTFS {esc(city["network"])}</a></td>'
         f'<td><a href="{LICENCES[city["source"]["licence"]][1]}">{LICENCES[city["source"]["licence"]][0]}</a></td>'
         f'<td>{french_date(city["source"]["fetchedAt"])}</td></tr>'
         for city in load_rankings(cities)
@@ -595,39 +596,38 @@ def render_legal(cities: list[dict]) -> str:
     )
     graph = [author_schema()]
     return f"""<!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
-{head(title=f"Mentions légales et licences · {SITE_NAME}", description="Éditeur, hébergeur, mesure d'audience et licences des données utilisées par À portée de tram.", url=SITE_URL + "mentions-legales/", base="../", image=SITE_URL + "og/home.jpg", image_alt="À portée de tram", published="2026-10-05", graph=graph)}
+{head(title=f"Legal notice and licenses · {SITE_NAME}", description="Publisher, hosting, audience measurement and data licenses used by Within Tram Reach.", url=SITE_URL + "mentions-legales/", base="../", image=SITE_URL + "og/home.jpg", image_alt="Within Tram Reach", published="2026-10-05", graph=graph)}
     <link rel="stylesheet" href="../styles.css?v={short_hash(SITE / 'styles.css')}" />
   </head>
   <body>
 {header('../')}
     <main class="page">
-      <nav class="breadcrumb" aria-label="Fil d'Ariane">
-        <a href="../">{SITE_NAME}</a> <span aria-hidden="true">›</span> <span aria-current="page">Mentions légales</span>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../">{SITE_NAME}</a> <span aria-hidden="true">›</span> <span aria-current="page">Legal notice</span>
       </nav>
       <section class="section">
-        <h1 class="page-title">Mentions légales et licences</h1>
-        <h2>Éditeur</h2>
-        <p>Ce site est édité à titre personnel par <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>. Contact&nbsp;: via
-        <a href="{AUTHOR_URL}contact/">la page contact de camilleroux.com</a> ou les <a href="{GITHUB_URL}/issues">issues GitHub</a> du projet.</p>
-        <h2>Hébergement</h2>
-        <p>GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.
-        Nom de domaine géré par Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis.</p>
-        <h2>Mesure d'audience et données personnelles</h2>
-        <p>La fréquentation est mesurée avec Cloudflare Web Analytics, sans cookie ni identifiant personnel. Les trajets
-        sont calculés dans votre navigateur&nbsp;: aucune position ni adresse n'est enregistrée. La recherche d'adresse
-        interroge l'API de la Base Adresse Nationale (adresse.data.gouv.fr) et, hors de France, l'API Photon de komoot
-        (photon.komoot.io, données OpenStreetMap).</p>
-        <h2>Licences</h2>
-        <p>Le code est publié sous licence MIT sur <a href="{GITHUB_URL}">GitHub</a>. Les données calculées
-        (<code>data/*.json</code>) sont des bases de données dérivées, publiées sous licence <a href="{ODBL_URL}">ODbL</a>.
-        Fond de carte et tracés&nbsp;: © <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>
-        (ODbL). Contours communaux&nbsp;: <a href="https://geo.api.gouv.fr/">geo.api.gouv.fr</a> (Licence Ouverte) et, hors
-        de France, limites administratives OpenStreetMap (ODbL).</p>
+        <h1 class="page-title">Legal notice and licenses</h1>
+        <h2>Publisher</h2>
+        <p>This site is published personally by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>. Contact: via
+        <a href="{AUTHOR_URL}contact/">the camilleroux.com contact page</a> or the project's <a href="{GITHUB_URL}/issues">GitHub issues</a>.</p>
+        <h2>Hosting</h2>
+        <p>GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.
+        Domain name managed by Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States.</p>
+        <h2>Audience measurement and personal data</h2>
+        <p>Traffic is measured with Cloudflare Web Analytics, with no cookies or personal identifiers. Trips are
+        computed in your browser: no location or address is stored. Address search queries the Base Adresse Nationale API
+        (adresse.data.gouv.fr) and, outside France, komoot's Photon API (photon.komoot.io, OpenStreetMap data).</p>
+        <h2>Licenses</h2>
+        <p>The code is published under the MIT license on <a href="{GITHUB_URL}">GitHub</a>. The computed data
+        (<code>data/*.json</code>) are derived databases, published under the <a href="{ODBL_URL}">ODbL</a> license.
+        Basemap and routes: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>
+        (ODbL). Municipal boundaries: <a href="https://geo.api.gouv.fr/">geo.api.gouv.fr</a> (Licence Ouverte) and, outside
+        France, OpenStreetMap administrative boundaries (ODbL).</p>
         <table class="lines-table">
-          <caption>Horaires utilisés pour chaque ville</caption>
-          <thead><tr><th scope="col">Ville</th><th scope="col">Source</th><th scope="col">Licence</th><th scope="col">Téléchargé le</th></tr></thead>
+          <caption>Timetables used for each city</caption>
+          <thead><tr><th scope="col">City</th><th scope="col">Source</th><th scope="col">License</th><th scope="col">Downloaded on</th></tr></thead>
           <tbody>
 {rows}
           </tbody>
@@ -643,17 +643,17 @@ def render_legal(cities: list[dict]) -> str:
 
 def write_sources_readme(cities: list[dict]) -> None:
     lines = [
-        "# Provenance des données",
+        "# Data provenance",
         "",
-        "Généré par `build_pages.py` à partir des fiches `sources/<ville>.json`.",
+        "Generated by `build_pages.py` from the `sources/<city>.json` records.",
         "",
-        "| Ville | Réseau | Licence | GTFS téléchargé le | Validité du GTFS | Jour de référence |",
+        "| City | Network | License | GTFS downloaded on | GTFS validity | Reference day |",
         "|---|---|---|---|---|---|",
     ]
     for city in sorted(cities, key=lambda item: item["name"]):
         gtfs = city["sources"]["gtfs"]
         period = gtfs.get("servicePeriod") or ["?", "?"]
-        how = " (à la main)" if gtfs.get("how") == "manual" else ""
+        how = " (manual)" if gtfs.get("how") == "manual" else ""
         lines.append(
             f"| [{city['name']}]({city['slug']}.json) | {city['network']} | {LICENCES[city['gtfsLicence']][0]} | "
             f"{gtfs.get('fetchedAt', '?')[:10]}{how} | {period[0]} → {period[1]} | {city['sources']['referenceDate']} |"
@@ -661,7 +661,7 @@ def write_sources_readme(cities: list[dict]) -> None:
     (ROOT / "sources" / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-RANKINGS_DIR = "classements"
+RANKINGS_DIR = "rankings"
 MEDALS = ["🥇", "🥈", "🥉"]
 
 
@@ -679,7 +679,11 @@ def load_rankings(cities: list[dict]) -> list[dict]:
 
 
 def ordinal(rank: int) -> str:
-    return "1<sup>re</sup>" if rank == 1 else f"{rank}<sup>e</sup>"
+    if 10 <= rank % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(rank % 10, "th")
+    return f"{rank}<sup>{suffix}</sup>"
 
 
 def clock(seconds: int) -> str:
@@ -694,11 +698,11 @@ def competition_ranks(values: list[float]) -> list[int]:
 
 
 def ranking_definitions(data: list[dict], base: str) -> list[dict]:
-    """The four published rankings. Each row: its cells, the value it is ranked on, its city and mode."""
+    """The five published rankings. Each row: its cells, the value it is ranked on, its city and mode."""
 
     def city_link(city: dict) -> str:
         if city.get("externalUrl"):
-            return f'<a href="{esc(city["externalUrl"])}" rel="noopener" title="La carte de Jules Grandin">{esc(city["city"])}</a>'
+            return f'<a href="{esc(city["externalUrl"])}" rel="noopener" title="Jules Grandin\'s map">{esc(city["city"])}</a>'
         return f'<a href="{base}{city["path"]}">{esc(city["city"])}</a>'
 
     def line_label(line: dict, name: str) -> str:
@@ -725,8 +729,8 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
             return esc(best["station"])
         tied = [esc(name) for name in best["tied"]]
         if len(tied) > 3:
-            return f'<span class="muted">Égalité entre {len(tied)} stations</span>'
-        return f'<span class="muted">Ex aequo : {", ".join(tied[:-1])} et {tied[-1]}</span>'
+            return f'<span class="muted">Tie between {len(tied)} stations</span>'
+        return f'<span class="muted">Tied: {", ".join(tied[:-1])} and {tied[-1]}</span>'
 
     def line_rows(items: list, value, cells) -> list[dict]:
         return [
@@ -737,15 +741,15 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
     return [
         {
             "slug": "dernier-tram-samedi-soir",
-            "short": "Le dernier tram du samedi",
-            "title": "Le dernier tram et le dernier métro du samedi soir, ville par ville",
-            "question": "Où rentre-t-on le plus tard en tram ou en métro le samedi soir ?",
-            "intro": "Après le concert, le bar ou le restaurant : jusqu'à quelle heure peut-on encore attraper un tram ou un "
-            "métro en plein centre-ville, la nuit du samedi au dimanche ?",
-            "method": "Dernier passage d'un tram ou d'un métro à la station du centre-ville (celle de la place centrale de "
-            "chaque carte), la nuit du samedi au dimanche, d'après les horaires théoriques d'un samedi ordinaire. "
-            "Les bus de nuit ne sont pas comptés.",
-            "headers": ["Ville", "Station du centre", "Ligne", "Dernier passage"],
+            "short": "The last Saturday tram",
+            "title": "The last Saturday-night tram and subway, city by city",
+            "question": "Where can you get home latest by tram or subway on a Saturday night?",
+            "intro": "After the concert, the bar or the restaurant: until what time can you still catch a tram or a "
+            "subway right downtown, on Saturday night into Sunday?",
+            "method": "Last tram or subway service at the downtown station (the one on each map's central square), on "
+            "Saturday night into Sunday, based on the scheduled timetables of an ordinary Saturday. "
+            "Night buses are not counted.",
+            "headers": ["City", "Downtown station", "Line", "Last service"],
             "valueCol": 3,
             "rows": [
                 {"city": city["slug"], "mode": None, "value": city["centre"]["lastSaturday"]["seconds"],
@@ -755,23 +759,23 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
             "podium": [(clock(city["centre"]["lastSaturday"]["seconds"]), esc(city["centre"]["station"]), esc(city["city"])) for city in night[:3]],
             "highlight": (
                 clock(night[0]["centre"]["lastSaturday"]["seconds"]),
-                f'dernier passage du samedi soir à la station {esc(night[0]["centre"]["station"])} ({esc(night[0]["city"])})',
+                f'last Saturday-night service at {esc(night[0]["centre"]["station"])} station ({esc(night[0]["city"])})',
             ),
             "position": lambda rank, total, city: (
-                f'{ordinal(rank)} sur {total} pour le dernier tram du samedi soir&nbsp;: '
-                f'{clock(city["centre"]["lastSaturday"]["seconds"])} à la station {esc(city["centre"]["station"])}'
+                f'{ordinal(rank)} of {total} for the last Saturday-night tram: '
+                f'{clock(city["centre"]["lastSaturday"]["seconds"])} at {esc(city["centre"]["station"])} station'
             ),
         },
         {
             "slug": "metro-tram-le-plus-frequent",
-            "short": "Le plus fréquent",
-            "title": "Le métro et le tram les plus fréquents de France",
-            "question": "Un métro ou un tram toutes les combien ?",
-            "intro": "À l'heure de pointe, certaines lignes passent toutes les minutes, d'autres toutes les dix minutes. "
-            "Voici les lignes de tram et de métro où l'on attend le moins.",
-            "method": "Nombre de passages entre 8 h et 9 h un jour de semaine, à la station et dans le sens les plus "
-            "desservis de chaque ligne.",
-            "headers": ["Ville", "Ligne", "Passages 8 h – 9 h", "Un passage toutes les"],
+            "short": "The most frequent",
+            "title": "France's most frequent subways and trams",
+            "question": "A subway or tram every how many minutes?",
+            "intro": "At rush hour, some lines run every couple of minutes, others every ten minutes. "
+            "Here are the tram and subway lines where you wait the least.",
+            "method": "Number of services between 8 and 9 a.m. on a weekday, at the busiest station and in the busiest "
+            "direction of each line.",
+            "headers": ["City", "Line", "Services 8 – 9 a.m.", "One service every"],
             "valueCol": 2,
             "byMode": True,
             "rows": line_rows(
@@ -785,23 +789,23 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
             ],
             "highlight": (
                 f'{num(frequent[0][2]["peakHeadway"])} min',
-                f'entre deux rames du {MODE_NAMES[frequent[0][2]["mode"]].lower()} {esc(frequent[0][1])} à {esc(frequent[0][0]["city"])}',
+                f'between two {MODE_NAMES[frequent[0][2]["mode"]].lower()} trains on line {esc(frequent[0][1])} in {esc(frequent[0][0]["city"])}',
             ),
             "position": lambda rank, total, city, name, line: (
-                f'{ordinal(rank)} {MODE_NAMES[line["mode"]].lower()} le plus fréquent sur {total}&nbsp;: ligne {esc(name)}, '
-                f'un passage toutes les {num(line["peakHeadway"])} min à l\'heure de pointe'
+                f'{ordinal(rank)} most frequent {MODE_NAMES[line["mode"]].lower()} out of {total}: line {esc(name)}, '
+                f'a service every {num(line["peakHeadway"])} min at rush hour'
             ),
         },
         {
             "slug": "station-la-plus-desservie",
-            "short": "La station la plus desservie",
-            "title": "La station de tram ou de métro la plus desservie de chaque ville",
-            "question": "Quelle station voit passer le plus de rames ?",
-            "intro": "Le nœud du réseau, là où se croisent les lignes : la station de chaque ville où passent le plus de "
-            "trams et de métros dans la journée.",
-            "method": "Passages de tram et de métro (toutes lignes, les deux sens) un jour de semaine, les quais d'un même "
-            "nom regroupés. Quand plusieurs stations d'un même tronc commun sont à égalité, aucune n'est désignée.",
-            "headers": ["Ville", "Station", "Passages par jour"],
+            "short": "The busiest station",
+            "title": "The busiest tram or subway station in each city",
+            "question": "Which station sees the most trains pass through?",
+            "intro": "The hub of the network, where the lines cross: each city's station with the most trams and "
+            "subways passing through during the day.",
+            "method": "Tram and subway services (all lines, both directions) on a weekday, platforms sharing a name "
+            "grouped together. When several stations on the same shared trunk are tied, none is singled out.",
+            "headers": ["City", "Station", "Services per day"],
             "valueCol": 2,
             "rows": [
                 {"city": city["slug"], "mode": None, "value": city["busiestStation"]["passages"],
@@ -814,25 +818,25 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
             ],
             "highlight": (
                 thousands(stations[0]["busiestStation"]["passages"]),
-                f'passages par jour à {esc(stations[0]["busiestStation"]["station"] or "")} ({esc(stations[0]["city"])})',
+                f'services per day at {esc(stations[0]["busiestStation"]["station"] or "")} ({esc(stations[0]["city"])})',
             ),
             "position": lambda rank, total, city: (
-                f'{ordinal(rank)} sur {total} pour la station la plus desservie&nbsp;: '
+                f'{ordinal(rank)} of {total} for busiest station: '
                 + (esc(city["busiestStation"]["station"]) + ", " if city["busiestStation"]["station"] else "")
-                + f'{thousands(city["busiestStation"]["passages"])} passages par jour'
+                + f'{thousands(city["busiestStation"]["passages"])} services per day'
             ),
         },
         {
             "slug": "ligne-la-plus-longue",
-            "short": "La ligne la plus longue",
-            "title": "Les lignes de tram et de métro les plus longues à parcourir",
-            "question": "Combien de temps pour aller d'un terminus à l'autre ?",
-            "intro": "Certaines lignes traversent toute l'agglomération : voici celles qu'il faut le plus de temps pour "
-            "parcourir de bout en bout.",
-            "method": "Durée prévue d'un terminus à l'autre, un jour de semaine, sur le plus long des trajets réguliers de la "
-            "ligne (au moins un tiers des passages du trajet le plus courant) : la ligne entière, sans les services "
-            "partiels ni les courses exceptionnelles.",
-            "headers": ["Ville", "Ligne", "Trajet", "Durée"],
+            "short": "The longest line",
+            "title": "The longest tram and subway rides",
+            "question": "How long from one terminus to the other?",
+            "intro": "Some lines cross the whole metro area: here are the ones that take the longest to ride from "
+            "end to end.",
+            "method": "Scheduled time from one terminus to the other, on a weekday, on the longest of the line's regular "
+            "trips (at least a third of the most common trip's services): the whole line, excluding partial services "
+            "and exceptional runs.",
+            "headers": ["City", "Line", "Trip", "Duration"],
             "valueCol": 3,
             "byMode": True,
             "rows": line_rows(
@@ -846,22 +850,22 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
             ],
             "highlight": (
                 f'{longest[0][2]["endToEndMinutes"]} min',
-                f'de bout en bout sur la ligne {esc(longest[0][1])} à {esc(longest[0][0]["city"])}',
+                f'end to end on line {esc(longest[0][1])} in {esc(longest[0][0]["city"])}',
             ),
             "position": lambda rank, total, city, name, line: (
-                f'{ordinal(rank)} ligne de {MODE_NAMES[line["mode"]].lower()} la plus longue sur {total}&nbsp;: '
-                f'ligne {esc(name)}, {line["endToEndMinutes"]} min de bout en bout'
+                f'{ordinal(rank)} longest {MODE_NAMES[line["mode"]].lower()} line out of {total}: '
+                f'line {esc(name)}, {line["endToEndMinutes"]} min end to end'
             ),
         },
         {
             "slug": "reseau-le-plus-fourni",
-            "short": "Le réseau le plus fourni",
-            "title": "Le réseau de tram et de métro le plus fourni de France",
-            "question": "Quel réseau fait rouler le plus de trams et de métros ?",
-            "intro": "Le nombre de trajets de tram et de métro programmés chaque jour : une mesure simple de l'offre de "
-            "chaque réseau.",
-            "method": "Nombre de trajets de tram et de métro programmés un jour de semaine, quelle que soit leur longueur.",
-            "headers": ["Ville", "Réseau", "Trajets par jour"],
+            "short": "The most extensive network",
+            "title": "France's most extensive tram and subway network",
+            "question": "Which network runs the most trams and subways?",
+            "intro": "The number of tram and subway trips scheduled each day: a simple measure of each network's "
+            "service.",
+            "method": "Number of tram and subway trips scheduled on a weekday, whatever their length.",
+            "headers": ["City", "Network", "Trips per day"],
             "valueCol": 2,
             "rows": [
                 {"city": city["slug"], "mode": None, "value": city["weekdayTrips"],
@@ -869,10 +873,10 @@ def ranking_definitions(data: list[dict], base: str) -> list[dict]:
                 for city in trips
             ],
             "podium": [(thousands(city["weekdayTrips"]), esc(city["network"]), esc(city["city"])) for city in trips[:3]],
-            "highlight": (thousands(trips[0]["weekdayTrips"]), f'trajets de tram et de métro par jour à {esc(trips[0]["city"])}'),
+            "highlight": (thousands(trips[0]["weekdayTrips"]), f'tram and subway trips per day in {esc(trips[0]["city"])}'),
             "position": lambda rank, total, city: (
-                f'{ordinal(rank)} réseau le plus fourni sur {total}&nbsp;: {thousands(city["weekdayTrips"])} trajets de '
-                f'tram et de métro par jour'
+                f'{ordinal(rank)} most extensive network out of {total}: {thousands(city["weekdayTrips"])} tram and '
+                f'subway trips per day'
             ),
         },
     ]
@@ -914,7 +918,7 @@ def ranking_page(*, title: str, description: str, url: str, base: str, image_nam
             "headline": title,
             "description": description,
             "url": url,
-            "inLanguage": "fr",
+            "inLanguage": "en",
             "author": {"@id": AUTHOR_URL + "#me"},
             "datePublished": date.today().isoformat(),
             "image": image_url,
@@ -932,7 +936,7 @@ def ranking_page(*, title: str, description: str, url: str, base: str, image_nam
         + [f'<span aria-current="page">{esc(crumbs[-1][0])}</span>']
     )
     return f"""<!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
 {head(title=f"{title} · {SITE_NAME}", description=description, url=url, base=base, image=image_url, image_alt=title, published=date.today().isoformat(), graph=graph)}
     <link rel="stylesheet" href="{base}styles.css?v={short_hash(SITE / 'styles.css')}" />
@@ -940,7 +944,7 @@ def ranking_page(*, title: str, description: str, url: str, base: str, image_nam
   <body>
 {header(base)}
     <main class="page">
-      <nav class="breadcrumb" aria-label="Fil d'Ariane">{trail}</nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">{trail}</nav>
 {body}
     </main>
 {footer(cities, base, "")}
@@ -965,7 +969,7 @@ const wanted = new URLSearchParams(location.search).get("mode");
 if (wanted) document.querySelector(`[data-filter="${wanted}"]`)?.click();
 if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
 document.querySelectorAll("[data-copy]").forEach((button) => button.addEventListener("click", async () => {
-  try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = "Lien copié ✓"; } catch {}
+  try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = "Link copied ✓"; } catch {}
 }));
 """
 
@@ -973,24 +977,24 @@ document.querySelectorAll("[data-copy]").forEach((button) => button.addEventList
 def method_section(data: list[dict], base: str, method: str) -> str:
     dates = ", ".join(f'{esc(city["city"])} ({french_date(city["weekday"])})' for city in sorted(data, key=lambda c: c["city"]))
     paris = (
-        " À Paris, ces chiffres comptent le métro et le tram d'Île-de-France Mobilités, sans RER, Transilien, CDGVAL, "
-        "Orlyval ni funiculaire de Montmartre."
+        " In Paris, these figures count the Île-de-France Mobilités metro and tram, excluding RER, Transilien, CDGVAL, "
+        "Orlyval and the Montmartre funicular."
         if any(city["slug"] == "paris" for city in data)
         else ""
     )
     return f"""      <section class="section" aria-labelledby="method-title">
-        <h2 id="method-title">Méthode</h2>
-        <p>{esc(method)} Ces chiffres ne reposent sur aucun calcul de trajet&nbsp;: ce sont des comptages directs dans les
-        horaires théoriques publiés par chaque réseau (GTFS), pour un mardi ou un jeudi de semaine scolaire. Seuls le tram et
-        le métro sont comptés (pas les bus, Busway, funiculaires ni téléphériques)&nbsp;; Rhônexpress et la navette OL
-        Stadium sont exclus à Lyon.{paris} Jours utilisés&nbsp;: {dates}.</p>
-        <p>Sources et licences&nbsp;: voir les <a href="{base}mentions-legales/">mentions légales</a>. Une erreur&nbsp;?
-        <a href="{GITHUB_URL}/issues">Signalez-la sur GitHub</a>.</p>
+        <h2 id="method-title">Method</h2>
+        <p>{esc(method)} These figures involve no trip computation: they are direct counts from the scheduled
+        timetables published by each network (GTFS), for a Tuesday or Thursday during the school term. Only trams and
+        subways are counted (no buses, busways, funiculars or cable cars); Rhônexpress and the OL Stadium shuttle
+        are excluded in Lyon.{paris} Days used: {dates}.</p>
+        <p>Sources and licenses: see the <a href="{base}mentions-legales/">legal notice</a>. Spotted an error?
+        <a href="{GITHUB_URL}/issues">Report it on GitHub</a>.</p>
       </section>"""
 
 
 def render_rankings(cities: list[dict]) -> dict[str, str]:
-    """Pages of the rankings: the hub (/classements/) and one page per ranking. Returns {path: html}."""
+    """Pages of the rankings: the hub (/rankings/) and one page per ranking. Returns {path: html}."""
     data = load_rankings(cities)
     if not data:
         return {}
@@ -1002,7 +1006,7 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
         f"""          <a class="ranking-card" href="./{d['slug']}/">
             <span class="ranking-card-question">{esc(d['question'])}</span>
             <ol>{"".join(f"<li><span>{MEDALS[i]}</span> <strong>{value}</strong> {label} · {sub}</li>" for i, (value, label, sub) in enumerate(d["podium"]))}</ol>
-            <span class="ranking-card-link">Voir le classement complet →</span>
+            <span class="ranking-card-link">See the full ranking →</span>
           </a>"""
         for d in hub_defs
     )
@@ -1010,33 +1014,33 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
         f'          <div class="stat"><strong>{d["highlight"][0]}</strong><span>{d["highlight"][1]}</span></div>' for d in hub_defs
     )
     hub_description = (
-        f"Le métro le plus fréquent, la station la plus desservie, la ligne la plus longue : les trams et métros de "
-        f"{len(data)} villes françaises comparés à partir de leurs horaires officiels."
+        f"The most frequent subway, the busiest station, the longest line: trams and subways from "
+        f"{len(data)} French cities compared using their official timetables."
     )
     pages[f"{RANKINGS_DIR}/index.html"] = ranking_page(
-        title="Les classements des trams et métros de France",
+        title="French tram and subway rankings",
         description=hub_description,
         url=hub_url,
         base="../",
-        image_name="classements.jpg",
-        crumbs=[(SITE_NAME, SITE_URL), ("Classements", hub_url)],
+        image_name="rankings.jpg",
+        crumbs=[(SITE_NAME, SITE_URL), ("Rankings", hub_url)],
         cities=cities,
         body=f"""      <section class="hero">
-        <span class="chip">🏆 {len(data)} réseaux comparés</span>
-        <h1>Les classements des trams et&nbsp;métros</h1>
-        <p class="lede">Quel métro passe le plus souvent, quelle station voit défiler le plus de rames, quelle ligne est la
-        plus longue à parcourir, où rentre-t-on le plus tard le samedi soir&nbsp;? Tous les chiffres viennent directement des
-        horaires officiels des réseaux.</p>
+        <span class="chip">🏆 {len(data)} networks compared</span>
+        <h1>Tram and subway rankings</h1>
+        <p class="lede">Which subway runs most often, which station sees the most trains go by, which line takes the
+        longest to ride, where can you get home latest on Saturday night? All figures come straight from the
+        networks' official timetables.</p>
         <div class="stat-grid ranking-highlights">
 {highlights}
         </div>
       </section>
-      <section aria-label="Les classements">
+      <section aria-label="Rankings">
         <div class="ranking-cards">
 {cards}
         </div>
       </section>
-{method_section(data, "../", "Chaque classement détaille sa propre mesure.")}""",
+{method_section(data, "../", "Each ranking details its own measurement.")}""",
     )
 
     defs = ranking_definitions(data, "../../")
@@ -1072,9 +1076,9 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
             )
         rows = "\n".join(body_rows)
         filters = (
-            """        <div class="mode-filter" role="group" aria-label="Filtrer par mode">
-          <button type="button" class="chip active" data-filter="">Tous</button>
-          <button type="button" class="chip" data-filter="metro">Métro</button>
+            """        <div class="mode-filter" role="group" aria-label="Filter by mode">
+          <button type="button" class="chip active" data-filter="">All</button>
+          <button type="button" class="chip" data-filter="metro">Subway</button>
           <button type="button" class="chip" data-filter="tram">Tram</button>
         </div>
 """
@@ -1082,12 +1086,12 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
             else ""
         )
         page_url = f"{hub_url}{d['slug']}/"
-        share_text = quote(f"{d['question']} Le classement des trams et métros de France")
-        share = f"""        <p class="share">Partager&nbsp;:
+        share_text = quote(f"{d['question']} French tram and subway rankings")
+        share = f"""        <p class="share">Share:
           <a href="https://www.linkedin.com/sharing/share-offsite/?url={quote(page_url)}" rel="noopener">LinkedIn</a> ·
           <a href="https://x.com/intent/post?text={share_text}&amp;url={quote(page_url)}" rel="noopener">X</a> ·
           <a href="https://bsky.app/intent/compose?text={share_text}%20{quote(page_url)}" rel="noopener">Bluesky</a> ·
-          <button type="button" class="link-button" data-copy="{page_url}">Copier le lien</button>
+          <button type="button" class="link-button" data-copy="{page_url}">Copy link</button>
         </p>"""
         others = " · ".join(f'<a href="../{o["slug"]}/">{esc(o["short"])}</a>' for o in defs if o["slug"] != d["slug"])
         pages[f"{RANKINGS_DIR}/{d['slug']}/index.html"] = ranking_page(
@@ -1095,11 +1099,11 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
             description=f'{d["question"]} {d["intro"]}',
             url=url,
             base="../../",
-            image_name=f"classement-{d['slug']}.jpg",
-            crumbs=[(SITE_NAME, SITE_URL), ("Classements", hub_url), (d["short"], url)],
+            image_name=f"ranking-{d['slug']}.jpg",
+            crumbs=[(SITE_NAME, SITE_URL), ("Rankings", hub_url), (d["short"], url)],
             cities=cities,
             body=f"""      <section class="hero">
-        <span class="chip">🏆 Classement · {len(data)} réseaux</span>
+        <span class="chip">🏆 Ranking · {len(data)} networks</span>
         <h1>{esc(d["question"])}</h1>
         <p class="lede">{esc(d["intro"])}</p>
         <div class="podium">
@@ -1118,7 +1122,7 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
         </table>
         </div>
 {share}
-        <p class="section-link">Les autres classements&nbsp;: {others} · <a href="../">tous les classements</a></p>
+        <p class="section-link">Other rankings: {others} · <a href="../">all rankings</a></p>
       </section>
 {method_section(data, "../../", d["method"])}""",
         )
@@ -1128,11 +1132,11 @@ def render_rankings(cities: list[dict]) -> dict[str, str]:
 def render_404(cities: list[dict]) -> str:
     links = "\n".join(f'          <a class="chip" href="/{city["path"]}">{esc(city["name"])}</a>' for city in cities)
     return f"""<!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Page introuvable · {SITE_NAME}</title>
+    <title>Page not found · {SITE_NAME}</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" />
@@ -1142,9 +1146,9 @@ def render_404(cities: list[dict]) -> str:
 {header('/')}
     <main class="page">
       <section class="hero">
-        <h1>Terminus&nbsp;!</h1>
-        <p class="lede">Cette page n'existe pas. Choisissez une ville pour reprendre votre trajet.</p>
-        <nav class="city-switch" aria-label="Villes">
+        <h1>End of the line!</h1>
+        <p class="lede">This page doesn't exist. Pick a city to get back on track.</p>
+        <nav class="city-switch" aria-label="Cities">
 {links}
         </nav>
       </section>

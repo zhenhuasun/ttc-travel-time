@@ -234,14 +234,14 @@ def main() -> None:
             # Sources stay local: without them, keep the figures computed last time.
             if city["slug"] in previous:
                 results[city["slug"]] = previous[city["slug"]]
-                print(f"{city['name']:16s} pas de GTFS local, chiffres précédents conservés")
+                print(f"{city['name']:16s}: no local GTFS, keeping previous figures")
             continue
         results[city["slug"]] = city_rankings(city)
         r = results[city["slug"]]
         print(
-            f"{city['name']:16s} {r['weekday']} | centre {r['centre']['station'][:18]:18s} 1er {r['centre']['firstWeekday']['time']} "
-            f"dernier {r['centre']['lastWeekday']['time']} samedi {r['centre']['lastSaturday']['time']} | station {r['busiestStation']['station'] or 'égalité'} "
-            f"{r['busiestStation']['passages']} | trajets {r['weekdayTrips']}"
+            f"{city['name']:16s} {r['weekday']} | centre {r['centre']['station'][:18]:18s} 1st {r['centre']['firstWeekday']['time']} "
+            f"last {r['centre']['lastWeekday']['time']} Sat {r['centre']['lastSaturday']['time']} | station {r['busiestStation']['station'] or 'tie'} "
+            f"{r['busiestStation']['passages']} | trips {r['weekdayTrips']}"
         )
     if not slugs:
         out.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

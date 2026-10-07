@@ -2,7 +2,7 @@
   "city": "Rouen",
   "builtAt": "2026-10-05T12:19:53+00:00",
   "referenceDate": "2026-10-06",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "Astuce",
     "dataset": "https://transport.data.gouv.fr/datasets/donnees-statiques-et-temps-reel-du-reseau-astuce-metropole-rouen-normandie",

@@ -2,7 +2,7 @@
   "city": "Marseille",
   "builtAt": "2026-10-05T23:55:03+00:00",
   "referenceDate": "2026-11-03",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "RTM",
     "dataset": "https://transport.data.gouv.fr/datasets/reseaux-urbains-de-la-metropole-aix-marseille-provence",

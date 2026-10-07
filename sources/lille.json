@@ -2,7 +2,7 @@
   "city": "Lille",
   "builtAt": "2026-10-05T12:19:42+00:00",
   "referenceDate": "2026-11-03",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "Ilévia",
     "dataset": "https://transport.data.gouv.fr/datasets/ilevia-localisation-des-arrets-bus-metro-et-tram-gtfs",

@@ -44,6 +44,8 @@ MIN_WAIT = 1.0
 MAX_WAIT = 15.0
 # A next stop served by less than this share of the trains leaving in its direction is a branch.
 BRANCH_SHARE = 0.9
+# Stations closer than this are one physical place (directional platforms in platform-level feeds).
+PLATFORM_GROUP_RADIUS = 60.0
 # Daytime window used to measure headways and ride times (weekday, 7h–20h).
 SERVICE_WINDOW = (7 * 3600, 20 * 3600)
 MIN_RING_DISTANCE = 45.0
@@ -530,7 +532,7 @@ def gtfs_path(data_dir: Path, city: dict) -> Path:
     merged = data_dir / "gtfs_merged.zip"
     if merged.exists() and all(merged.stat().st_mtime >= source.stat().st_mtime for source in sources):
         return merged
-    print(f"Fusion des GTFS ({', '.join(source.name for source in sources)})…")
+    print(f"Merging GTFS ({', '.join(source.name for source in sources)})…")
     archives = [zipfile.ZipFile(source) for source in sources]
     main, others = archives[0], list(zip(extras, archives[1:]))
     with zipfile.ZipFile(merged, "w", zipfile.ZIP_DEFLATED) as out:
@@ -1063,14 +1065,37 @@ def network_stats(city: dict, route_info, stations, route_states, station_states
                 best[target] = time + weight
                 heapq.heappush(heap, (time + weight, target))
     arrival = {}
+    transit_best = {}
     for state, time in enumerate(best):
         index = route_states[state]["stationIndex"]
         out = time + route_states[state]["access"]
+        if math.isfinite(time):
+            transit_best[index] = min(transit_best.get(index, math.inf), out)
         walk = dist(origin, stations[index]["point"]) / WALK_METERS_PER_MINUTE
         arrival[index] = min(arrival.get(index, math.inf), out, walk)
     rail_times = [arrival.get(i, math.inf) for i in rail_station_ids]
     reachable = [i for i in rail_station_ids if math.isfinite(arrival.get(i, math.inf))]
-    farthest = max(reachable, key=lambda i: arrival[i])
+    # Platform-level feeds (TTC) have departure-only platforms no trip ever reaches: their "arrival"
+    # is just the walk fallback. The farthest station must be transit-reachable, otherwise the stat
+    # names a platform and shows a walking time.
+    transit_reachable = [i for i in reachable if i in transit_best]
+    if transit_reachable:
+        # Platform-level feeds (TTC) split stations per direction: group co-located stations so the
+        # farthest is a place a rider can actually arrive at, timed by its best platform.
+        transit_set = set(transit_reachable)
+        gindex = StationIndex([station["point"] for station in stations], transit_reachable, size=200.0)
+        seen: set = set()
+        groups = []
+        for i in transit_reachable:
+            if i in seen:
+                continue
+            members = [j for j in gindex.within(stations[i]["point"], PLATFORM_GROUP_RADIUS) if j in transit_set]
+            seen.update(members)
+            groups.append(members)
+        farthest_group = max(groups, key=lambda g: min(arrival[j] for j in g))
+        farthest = min(farthest_group, key=lambda j: arrival[j])
+    else:
+        farthest = max(reachable, key=lambda i: arrival[i])
     og_station = min(reachable, key=lambda i: abs(arrival[i] - OG_TRIP_MINUTES))
     meters_per_deg_lat = 111_320.0
     og_x, og_y = stations[og_station]["point"]
@@ -1104,7 +1129,7 @@ def write_provenance(city: dict, data_dir: Path, reference_date: date, route_inf
         "city": city["name"],
         "builtAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "referenceDate": reference_date.isoformat(),
-        "serviceWindow": f"{window_start // 3600}h–{window_end // 3600}h",
+        "serviceWindow": f"{window_start // 3600}:00–{window_end // 3600}:00",
         "gtfs": {
             "network": city["network"],
             "dataset": city["gtfsDataset"],
@@ -1123,7 +1148,7 @@ def write_provenance(city: dict, data_dir: Path, reference_date: date, route_inf
         },
         **({"arrondissements": manifest["arrondissements.geojson"]} if "arrondissements.geojson" in manifest else {}),
         "openStreetMap": {
-            "licence": "ODbL, © contributeurs OpenStreetMap",
+            "licence": "ODbL, © OpenStreetMap contributors",
             **{name.removesuffix(".json"): manifest[name] for name in ("osm_rail.json", "osm_water_parks.json", "osm_rivers.json", "osm_bridges.json") if name in manifest},
         },
         "railGeometry": "OpenStreetMap" if city.get("railGeometry") == "osm" else "GTFS shapes.txt",
@@ -1240,9 +1265,9 @@ def main() -> None:
     modes = Counter(info["mode"] for info in route_info.values())
     print(
         f"Wrote {output_path.relative_to(ROOT)} "
-        f"({output_path.stat().st_size / 1_000_000:.2f} MB, GTFS du {reference_date}, lignes {dict(modes)}, "
-        f"{len(stations)} arrêts dont {rail_count} tram/métro, {len(route_states)} states, "
-        f"{sum(len(a) for a in adjacency)} edges, {len(cells)} cells ({cols}×{rows}), {len(routes)} tracés)"
+        f"({output_path.stat().st_size / 1_000_000:.2f} MB, GTFS of {reference_date}, lines {dict(modes)}, "
+        f"{len(stations)} stops including {rail_count} tram/subway, {len(route_states)} states, "
+        f"{sum(len(a) for a in adjacency)} edges, {len(cells)} cells ({cols}×{rows}), {len(routes)} geometries)"
     )
 
 

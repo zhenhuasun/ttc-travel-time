@@ -2,7 +2,7 @@
   "city": "Dijon",
   "builtAt": "2026-10-04T23:03:16+00:00",
   "referenceDate": "2026-10-06",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "Divia",
     "dataset": "https://transport.data.gouv.fr/datasets/gtfs-diviamobilites",

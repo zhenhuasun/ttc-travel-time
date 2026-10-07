@@ -2,7 +2,7 @@
 """Render social previews with headless Chrome: site/og/<city>.jpg (1200×630), its thumbnail og/thumb-<city>.jpg
 for the home page cards, and og/home.jpg for the home page.
 
-Usage: python3 tools/render_og.py <city>|home|classements|all   (run build_pages.py before, and again after for "home")
+Usage: python3 tools/render_og.py <city>|home|rankings|all   (run build_pages.py before, and again after for "home")
 Needs Google Chrome and ImageMagick (`magick`).
 """
 
@@ -40,7 +40,7 @@ OVERLAY = """<style>
 </head>"""
 
 
-HOME = """<!doctype html><html lang="fr"><head><meta charset="utf-8" />
+HOME = """<!doctype html><html lang="en"><head><meta charset="utf-8" />
 <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:500,800" />
 <style>
   body { width: 1200px; height: 630px; margin: 0; overflow: hidden; font-family: Inter, sans-serif; background: #fff; }
@@ -52,7 +52,7 @@ HOME = """<!doctype html><html lang="fr"><head><meta charset="utf-8" />
   img { display: block; width: 100%; height: 190px; object-fit: cover; object-position: center 70%; }
   figcaption { position: absolute; left: 10px; bottom: 10px; padding: 4px 10px; border-radius: 8px; background: #fff; font-weight: 800; font-size: 20px; }
 </style></head><body>
-<header><h1>À portée de tram</h1><p>Les grandes villes redessinées par le temps de trajet en tram et en métro</p></header>
+<header><h1>Within Tram Reach</h1><p>Great cities redrawn by tram and metro travel time</p></header>
 <div class="grid">FIGURES</div></body></html>"""
 
 
@@ -109,16 +109,16 @@ RANKINGS_OVERLAY = """<style>
   .ranking-highlights .stat { padding: 22px; }
   .ranking-highlights strong { font-size: 2.6rem; }
   .ranking-highlights span { font-size: 1.05rem; }
-  body::after { content: "À portée de tram · tram.camilleroux.com · d'après les horaires officiels des réseaux";
+  body::after { content: "Within Tram Reach · tram.camilleroux.com · based on the networks' official timetables";
     position: absolute; left: 0; right: 0; bottom: 44px; text-align: center; color: #3aa70b; font: 600 20px Inter, sans-serif; }
 </style>
 </head>"""
 
 
 def render_rankings() -> None:
-    """The rankings hub (og/classements.jpg) and every ranking page (og/classement-<slug>.jpg)."""
-    pages = [(SITE / "classements", "classements.jpg")] + [
-        (path.parent, f"classement-{path.parent.name}.jpg") for path in sorted((SITE / "classements").glob("*/index.html"))
+    """The rankings hub (og/rankings.jpg) and every ranking page (og/ranking-<slug>.jpg)."""
+    pages = [(SITE / "rankings", "rankings.jpg")] + [
+        (path.parent, f"ranking-{path.parent.name}.jpg") for path in sorted((SITE / "rankings").glob("*/index.html"))
     ]
     server = serve()
     try:
@@ -139,11 +139,11 @@ def main() -> None:
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     cities = load_cities()
-    targets = [c["slug"] for c in cities] + ["home", "classements"] if sys.argv[1] == "all" else [sys.argv[1]]
+    targets = [c["slug"] for c in cities] + ["home", "rankings"] if sys.argv[1] == "all" else [sys.argv[1]]
     for target in targets:
         if target == "home":
             render_home(cities)
-        elif target == "classements":
+        elif target == "rankings":
             render_rankings()
         else:
             render_city(next(city for city in cities if city["slug"] == target))
@@ -151,8 +151,8 @@ def main() -> None:
 
 def render_city(city: dict) -> None:
     page = (SITE / city["path"] / "index.html").read_text(encoding="utf-8")
-    title = f'<div class="og-title"><h1>{city["title"]}</h1><p>La ville redessinée par le temps de trajet, depuis où vous voulez</p></div>'
-    credit = '<div class="og-credit">© contributeurs OpenStreetMap · horaires ' + city["network"] + '</div>'
+    title = f'<div class="og-title"><h1>{city["title"]}</h1><p>The city redrawn by travel time, from wherever you want</p></div>'
+    credit = '<div class="og-credit">© OpenStreetMap contributors · ' + city["network"] + ' timetables</div>'
     page = page.replace("</head>", OVERLAY, 1).replace('<canvas id="mapCanvas"></canvas>', '<canvas id="mapCanvas"></canvas>\n' + title + credit, 1)
     preview = SITE / city["path"] / "_og.html"
     preview.write_text(page, encoding="utf-8")

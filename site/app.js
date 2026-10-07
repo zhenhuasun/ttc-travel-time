@@ -1,6 +1,6 @@
-// Carte des temps de trajet en transports en commun (tram.camilleroux.com).
-// La ville affichée est décrite par le bloc JSON #city-config de la page.
-// Carte des temps de trajet en tram (et bus) sur le réseau TaM.
+// Travel-time map by public transit (tram.camilleroux.com).
+// The displayed city is described by the page's #city-config JSON block.
+// Travel-time map by tram (and bus) on the TaM network.
 
 const CITY = JSON.parse(document.getElementById("city-config").textContent);
 const DATA_URL = new URL(`./data/${CITY.slug}.json?v=${CITY.dataVersion}`, import.meta.url);
@@ -10,12 +10,12 @@ const GEOCODER_URL = CITY.geocoder === "photon" ? "https://photon.komoot.io/api/
 const DEFAULT_FROM = CITY.defaultFrom;
 const MODE_LABELS = {
   tram: "Tram",
-  metro: "Métro",
+  metro: "Subway",
   rer: "RER",
   train: "Train",
-  funicular: "Funiculaire",
-  cable: "Téléphérique",
-  ferry: "Bateau",
+  funicular: "Funicular",
+  cable: "Cable car",
+  ferry: "Boat",
   busway: "Busway",
   bhns: "BHNS",
   bus: "Bus",
@@ -24,15 +24,15 @@ const DEFAULT_MAX = 45;
 const ISOCHRONE_OPTIONS = [15, 30, 45, 60];
 const DEFAULT_ISOCHRONES = [15, 30];
 const REACH_MINUTES = 30;
-// Au doigt, on vise moins précisément et un tap bouge souvent de quelques pixels.
+// Touch is less precise, and a tap often moves a few pixels.
 const MARKER_HIT_RADIUS = { mouse: 18, touch: 30 };
 const CLICK_SLOP = { mouse: 5, touch: 12 };
 const MIN_ZOOM_FACTOR = 0.5;
 const MAX_ZOOM_FACTOR = 14;
-const STOP_LABEL_SCALE = 0.13; // pixels par mètre au-delà desquels on nomme les arrêts
-const RAIL_NAME_RADIUS = 400; // mètres
+const STOP_LABEL_SCALE = 0.13; // pixels per meter beyond which stops are named
+const RAIL_NAME_RADIUS = 400; // meters
 
-// Du plus proche (vert) au plus lointain (rouge) ; au-delà du max : gris.
+// From nearest (green) to farthest (red); beyond the max: grey.
 const PALETTE = [
   [0, [47, 150, 18]],
   [0.25, [126, 200, 80]],
@@ -40,13 +40,13 @@ const PALETTE = [
   [0.75, [244, 182, 112]],
   [1, [226, 120, 120]],
 ];
-// Au-delà du max, la couleur s'efface progressivement jusqu'à laisser voir le fond.
+// Beyond the max, the color fades out gradually to reveal the background.
 const BEYOND_FADE = 0.15;
 const HEAT_ALPHA = 0.78;
 const HEAT_UPSAMPLE = 3;
 const LUT_SIZE = 512;
 const NEIGHBOURS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-const RIVER_BRIDGE_CELLS = 4; // cases de 200 m : de quoi traverser le Rhône ou la Garonne
+const RIVER_BRIDGE_CELLS = 4; // 200 m cells: enough to cross the Rhône or the Garonne
 
 const COLORS = {
   background: "#f1efe9",
@@ -76,9 +76,9 @@ const app = {
   includeBus: false,
   maxMinutes: DEFAULT_MAX,
   isochrones: [...DEFAULT_ISOCHRONES],
-  heatFrom: "from", // la heatmap part du départ ou de l'arrivée
-  solution: null, // plus courts chemins depuis le départ (panneau, itinéraire)
-  heatSolution: null, // plus courts chemins depuis le point d'où part la heatmap
+  heatFrom: "from", // the heat map starts from the start or the destination
+  solution: null, // shortest paths from the start (panel, itinerary)
+  heatSolution: null, // shortest paths from the point the heat map starts from
   grid: null,
   heatCanvas: document.createElement("canvas"),
   drag: null,
@@ -86,7 +86,7 @@ const app = {
   frameRequested: false,
 };
 
-// --- Petites fonctions utilitaires ------------------------------------------
+// --- Small utility functions ------------------------------------------
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const hypot = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -143,9 +143,9 @@ function pointInPolygon(point, polygon) {
   return pointInRing(point, polygon[0]) && !polygon.slice(1).some((hole) => pointInRing(point, hole));
 }
 
-// --- Cours d'eau --------------------------------------------------------------
-// Les grands cours d'eau (Loire, Garonne, Rhône…) ne se traversent à pied que par un pont : une marche dont la ligne
-// droite en coupe un passe par le meilleur pont (un seul : une île se rejoint par ses arrêts). Même règle que build_data.py.
+// --- Rivers --------------------------------------------------------------
+// Big rivers (Loire, Garonne, Rhône…) can only be crossed on foot by a bridge: a walk whose straight
+// line crosses one goes via the best bridge (only one: an island is reached via its stops). Same rule as build_data.py.
 
 const RIVER_BUCKET = 500;
 const MAX_BRIDGE_WALK_METERS = 3000;
@@ -185,17 +185,17 @@ function crossesRiver(a, b) {
   );
 }
 
-/** Distance de marche en mètres : en ligne droite, ou par un pont ; infinie sans pont praticable. */
+/** Walking distance in meters: as the crow flies, or via a bridge; infinite without a usable bridge. */
 function walkMeters(a, b) {
   const straight = hypot(a, b);
   if (!crossesRiver(a, b)) return straight;
-  // Le plus court détour d'abord : le premier pont dont les deux tronçons restent sur leur rive est le meilleur.
+  // Shortest detour first: the first bridge whose two legs stay on their banks is the best.
   const detours = [];
   for (const [endA, endB, length] of app.data.bridges ?? []) {
     detours.push([hypot(a, endA) + length + hypot(endB, b), endA, endB], [hypot(a, endB) + length + hypot(endA, b), endB, endA]);
   }
   detours.sort((x, y) => x[0] - y[0]);
-  // Au-delà de 3 km (40 min), marcher n'est jamais le meilleur choix : inutile de tester les ponts lointains.
+  // Beyond 3 km (40 min), walking is never the best choice: no need to test far bridges.
   const found = detours.find(([meters, near, far]) => meters <= MAX_BRIDGE_WALK_METERS && !crossesRiver(a, near) && !crossesRiver(far, b));
   return found ? found[0] : Infinity;
 }
@@ -210,7 +210,7 @@ function communeAt(point) {
   return ((app.data.arrondissements ?? []).find(inside) ?? app.data.boroughs.find(inside))?.name;
 }
 
-// --- Graphe du réseau ---------------------------------------------------------
+// --- Network graph ---------------------------------------------------------
 
 class MinHeap {
   constructor() {
@@ -282,7 +282,7 @@ function prepareGraph(data) {
     weights,
     station: Int32Array.from(data.routeStates, (state) => state.stationIndex),
     wait: Float32Array.from(data.routeStates, (state) => state.wait),
-    // Accès au quai (escaliers, couloirs du métro), compté à l'entrée comme à la sortie.
+    // Platform access (stairs, subway corridors), counted both on entry and exit.
     access: Float32Array.from(data.routeStates, (state) => state.access),
     route: data.routeStates.map((state) => state.routeId),
     isBus: Uint8Array.from(data.routeStates, (state) => (data.routeInfo[state.routeId]?.rail ? 0 : 1)),
@@ -297,7 +297,7 @@ function stationUsable(index) {
   return app.includeBus || app.data.stations[index].rail;
 }
 
-/** Plus courts chemins depuis un point : temps d'arrivée à chaque arrêt + prédécesseurs. */
+/** Shortest paths from a point: arrival time at each stop + predecessors. */
 function solveFrom(point) {
   const { graph, data } = app;
   const dist = new Float64Array(graph.count).fill(Infinity);
@@ -305,7 +305,7 @@ function solveFrom(point) {
   const seedWalk = new Float64Array(graph.count);
   const heap = new MinHeap();
 
-  // Les arrêts les plus proches à vol d'oiseau, puis leur vraie distance à pied (détour par un pont).
+  // The nearest stops as the crow flies, then their true walking distance (detour via a bridge).
   const seeds = data.stations
     .map((station, index) => ({ index, walk: walkMinutes(hypot(point, station.point)) }))
     .filter((seed) => stationUsable(seed.index))
@@ -346,7 +346,7 @@ function solveFrom(point) {
 
   const stationTime = new Float64Array(data.stations.length).fill(Infinity);
   const stationBest = new Int32Array(data.stations.length).fill(-1);
-  // Temps pour ressortir dans la rue à chaque arrêt (le métro demande de remonter du quai).
+  // Time to get back out to the street at each stop (the subway requires going back up from the platform).
   for (let state = 0; state < graph.count; state += 1) {
     const station = graph.station[state];
     const out = dist[state] + graph.access[state];
@@ -358,13 +358,13 @@ function solveFrom(point) {
   return { point, dist, prev, seedWalk, stationTime, stationBest };
 }
 
-/** Meilleur temps vers un point quelconque : à pied direct, ou via l'arrêt le plus favorable. */
+/** Best time to any point: walking directly, or via the most favorable stop. */
 function travelTo(solution, point) {
   const direct = walkMinutes(walkMeters(solution.point, point));
   let best = { minutes: direct, station: -1, walk: direct };
   app.data.stations.forEach((station, index) => {
     const arrival = solution.stationTime[index];
-    // La vraie distance (pont), plus coûteuse, seulement pour un arrêt qui peut améliorer le trajet.
+    // The true distance (bridge), more costly, only for a stop that could improve the trip.
     if (!Number.isFinite(arrival) || arrival + walkMinutes(hypot(station.point, point)) >= best.minutes) return;
     const walk = walkMinutes(walkMeters(station.point, point));
     if (arrival + walk < best.minutes) best = { minutes: arrival + walk, station: index, walk };
@@ -374,15 +374,15 @@ function travelTo(solution, point) {
 
 function routeLabel(routeId) {
   const info = app.data.routeInfo[routeId];
-  return `${MODE_LABELS[info.mode] ?? "Ligne"} ${info.name}`;
+  return `${MODE_LABELS[info.mode] ?? "Line"} ${info.name}`;
 }
 
-/** Reconstitue l'itinéraire (marche, lignes, correspondances) vers un point. */
+/** Reconstructs the itinerary (walking, lines, transfers) to a point. */
 function buildItinerary(solution, point) {
   const { graph, data } = app;
   const result = travelTo(solution, point);
   if (result.station === -1) {
-    return { minutes: result.minutes, steps: [{ kind: "walk", text: "Tout à pied", minutes: result.minutes }] };
+    return { minutes: result.minutes, steps: [{ kind: "walk", text: "All on foot", minutes: result.minutes }] };
   }
 
   const chain = [];
@@ -390,8 +390,8 @@ function buildItinerary(solution, point) {
   chain.reverse();
 
   const name = (state) => data.stations[graph.station[state]].name;
-  const steps = [{ kind: "walk", text: `À pied jusqu'à ${name(chain[0])}`, minutes: solution.seedWalk[chain[0]] }];
-  // Part du trajet passée à attendre un train de sa branche (ligne 13, RER A) : 3ᵉ valeur, rare, de l'arête.
+  const steps = [{ kind: "walk", text: `On foot to ${name(chain[0])}`, minutes: solution.seedWalk[chain[0]] }];
+  // Share of the trip spent waiting for a train of its branch (line 13, RER A): the rare 3rd value of the edge.
   const extraWait = (from, to) => data.adjacency[from].find(([target]) => target === to)?.[2] ?? 0;
   let legStart = chain[0];
   let legExtra = 0;
@@ -412,23 +412,23 @@ function buildItinerary(solution, point) {
       continue;
     }
     closeLeg(from);
-    // Couloirs et quais : tout le temps de la correspondance, sauf l'attente de la ligne suivante (affichée avec elle).
+    // Corridors and platforms: all of the transfer time, except the wait for the next line (shown with it).
     const minutes = solution.dist[to] - solution.dist[from] - graph.wait[to];
-    const text = graph.station[from] === graph.station[to] ? `Correspondance à ${name(to)}` : `Correspondance à pied vers ${name(to)}`;
+    const text = graph.station[from] === graph.station[to] ? `Transfer at ${name(to)}` : `Walking transfer to ${name(to)}`;
     steps.push({ kind: "walk", text, minutes });
     legStart = to;
     legExtra = 0;
   }
   closeLeg(chain[chain.length - 1]);
-  // La sortie du quai (métro) est comptée avec la marche finale.
+  // Exiting the platform (subway) is counted with the final walk.
   const exit = graph.access[chain[chain.length - 1]];
-  steps.push({ kind: "walk", text: "À pied jusqu'à l'arrivée", minutes: result.walk + exit });
+  steps.push({ kind: "walk", text: "On foot to the destination", minutes: result.walk + exit });
   return { minutes: result.minutes, steps };
 }
 
-// --- Grille des temps ---------------------------------------------------------
+// --- Time grid ---------------------------------------------------------
 
-/** Comble les cases sans valeur (eau, hors carte) avec la moyenne de leurs voisines, `passes` fois. */
+/** Fills cells without a value (water, off-map) with the average of their neighbours, `passes` times. */
 function fillGaps(values, cols, rows, passes) {
   const filled = Float32Array.from(values);
   for (let pass = 0; pass < passes; pass += 1) {
@@ -460,23 +460,23 @@ function computeGrid(solution) {
   const { gridCols: cols, gridRows: rows } = meta;
   const times = new Float32Array(cols * rows).fill(NaN);
   for (const cell of cells) {
-    // cell.access donne déjà la vraie distance à pied (build_data.py) ; la marche directe se calcule ici.
+    // cell.access already gives the true walking distance (build_data.py); direct walking is computed here.
     let best = Infinity;
     for (const [station, meters] of cell.access) {
       const time = solution.stationTime[station] + walkMinutes(meters);
       if (time < best) best = time;
     }
     if (walkMinutes(hypot(solution.point, cell.point)) < best) best = Math.min(best, walkMinutes(walkMeters(solution.point, cell.point)));
-    // Case enclavée derrière un cours d'eau, sans arrêt de son côté : très loin, sans infini qui contaminerait le lissage.
+    // Cell cut off behind a river, with no stop on its side: very far, but not infinite so as not to contaminate the smoothing.
     times[cell.row * cols + cell.col] = Math.min(best, 180);
   }
-  // Les isochrones enjambent les fleuves (comblés avec les valeurs des rives) au lieu d'en faire le tour ;
-  // elles sont ensuite découpées sur la terre ferme au dessin.
+  // Isochrones straddle rivers (filled with the bank values) instead of going around them;
+  // they are then clipped to dry land when drawn.
   const bridged = fillGaps(times, cols, rows, RIVER_BRIDGE_CELLS);
   return { times, smooth: smoothGrid(bridged, cols, rows), cols, rows, contours: {} };
 }
 
-/** Moyenne 3×3 limitée à la terre ferme, pour des isochrones moins crénelées. */
+/** 3×3 average limited to dry land, for less jagged isochrones. */
 function smoothGrid(times, cols, rows) {
   const out = new Float32Array(times.length).fill(NaN);
   for (let row = 0; row < rows; row += 1) {
@@ -503,7 +503,7 @@ function smoothGrid(times, cols, rows) {
   return out;
 }
 
-/** Peint la grille dans une image (HEAT_UPSAMPLE² pixels par cellule, interpolation bilinéaire). */
+/** Paints the grid into an image (HEAT_UPSAMPLE² pixels per cell, bilinear interpolation). */
 function paintHeat(grid, { fast = false } = {}) {
   const { cols, rows, times } = grid;
   const upsample = fast ? 1 : HEAT_UPSAMPLE;
@@ -513,10 +513,10 @@ function paintHeat(grid, { fast = false } = {}) {
   const heatCtx = heat.getContext("2d");
   const image = heatCtx.createImageData(heat.width, heat.height);
 
-  // Étend les valeurs d'un cran hors de la terre pour que le lissage ne fonce pas les côtes.
+  // Extends values one step beyond land so smoothing doesn't darken the coasts.
   const filled = fillGaps(times, cols, rows, 2);
 
-  // Table de couleurs précalculée : t ∈ [0, 1 + BEYOND_FADE] découpé en LUT_SIZE pas.
+  // Precomputed color table: t ∈ [0, 1 + BEYOND_FADE] split into LUT_SIZE steps.
   const lutMax = 1 + BEYOND_FADE;
   const lut = new Uint32Array(LUT_SIZE);
   const lutBytes = new Uint8Array(lut.buffer);
@@ -562,7 +562,7 @@ function paintHeat(grid, { fast = false } = {}) {
   heatCtx.putImageData(image, 0, 0);
 }
 
-/** Marching squares sur les centres de cellules ; renvoie des segments en coordonnées monde. */
+/** Marching squares on cell centers; returns segments in world coordinates. */
 function contourSegments(grid, threshold) {
   const { cols, rows, smooth } = grid;
   const [minX, minY, maxX, maxY] = app.data.meta.bounds;
@@ -581,7 +581,7 @@ function contourSegments(grid, threshold) {
   const segments = [];
   for (let row = 0; row < rows - 1; row += 1) {
     for (let col = 0; col < cols - 1; col += 1) {
-      // Coins dans le sens trigonométrique : bas-gauche, bas-droite, haut-droite, haut-gauche.
+      // Corners counterclockwise: bottom-left, bottom-right, top-right, top-left.
       const corners = [
         [center(row, col), value(row, col)],
         [center(row, col + 1), value(row, col + 1)],
@@ -602,7 +602,7 @@ function contourSegments(grid, threshold) {
   return segments;
 }
 
-// --- Vue et rendu -------------------------------------------------------------
+// --- View and rendering -------------------------------------------------------------
 
 function buildPaths(data) {
   const [ox, oy] = app.offset;
@@ -626,10 +626,10 @@ function buildPaths(data) {
   }
   return {
     land: polygonsPath(data.boroughs.flatMap((commune) => commune.polygons)),
-    // Terres voisines des villes côtières : ce qui reste découvert autour est la mer.
+    // Neighboring land of coastal cities: whatever remains uncovered around is the sea.
     context: polygonsPath(data.context ?? []),
-    // Un chemin par polygone, rempli en « evenodd » : les îles (trous) restent de la terre ferme,
-    // sans que deux plans d'eau qui se chevauchent s'annulent.
+    // One path per polygon, filled with "evenodd": islands (holes) stay dry land,
+    // without two overlapping water bodies cancelling out.
     water: data.water.map((polygon) => polygonsPath([polygon])),
     parks: data.parks.map((polygon) => polygonsPath([polygon])),
     communeLines,
@@ -665,7 +665,7 @@ function zoomAt(factor, screenX, screenY) {
   requestRender();
 }
 
-/** Passe le contexte en coordonnées monde (mètres, origine décalée, axe y vers le nord). */
+/** Switches the context to world coordinates (meters, offset origin, y axis pointing north). */
 function useWorldTransform() {
   const { cx, cy, scale } = app.view;
   const { width, height, dpr } = app.size;
@@ -721,8 +721,8 @@ function drawIsochrones() {
     ctx.stroke(path);
     ctx.restore();
 
-    // Étiquette sur le point le plus au nord de la courbe encore visible, à l'écart des marqueurs
-    // et des étiquettes déjà posées.
+    // Label on the northernmost visible point of the curve, away from markers
+    // and already placed labels.
     const avoid = [app.from, app.to].filter(Boolean).map((place) => project(place.point));
     avoid.push(...labels.map((label) => label.at));
     const candidates = [];
@@ -784,7 +784,7 @@ function drawCommuneNames() {
   ctx.textBaseline = "middle";
   const font = `600 ${app.view.scale > app.view.fitScale * 2 ? 13 : 10.5}px Inter, sans-serif`;
   const arrondissements = app.data.arrondissements ?? [];
-  // Une commune découpée en arrondissements (Marseille) laisse la place aux noms de ses arrondissements.
+  // A municipality split into arrondissements (Marseille) leaves room for its arrondissement names.
   const communes = app.data.boroughs.filter((commune) => !arrondissements.some((a) => a.name.startsWith(`${commune.name} `)));
   for (const commune of [...communes, ...arrondissements]) {
     const [x, y] = project(commune.label);
@@ -827,7 +827,7 @@ function render() {
   const { width, height, dpr } = app.size;
   const px = 1 / app.view.scale;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  // Villes côtières : le fond est la mer, et les terres voisines sont dessinées par-dessus.
+  // Coastal cities: the background is the sea, and neighboring land is drawn on top.
   const sea = app.data.meta.sea;
   ctx.fillStyle = sea ? COLORS.water : COLORS.background;
   ctx.fillRect(0, 0, width, height);
@@ -848,7 +848,7 @@ function render() {
     ctx.globalAlpha = HEAT_ALPHA;
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    // L'image a sa ligne 0 au sud : avec l'axe y inversé, elle se dessine dans le bon sens.
+    // The image has its row 0 in the south: with the flipped y axis, it draws the right way up.
     ctx.drawImage(app.heatCanvas, minX - ox, minY - oy, maxX - minX, maxY - minY);
     ctx.restore();
   }
@@ -875,9 +875,9 @@ function render() {
   drawStops();
   if (app.to) {
     const minutes = app.solution ? formatMinutes(travelTo(app.solution, app.to.point).minutes) : null;
-    drawMarker(app.to.point, COLORS.to, app.heatFrom === "to" ? `Arrivée · ${minutes}` : minutes);
+    drawMarker(app.to.point, COLORS.to, app.heatFrom === "to" ? `Destination · ${minutes}` : minutes);
   }
-  if (app.from) drawMarker(app.from.point, COLORS.from, "Départ");
+  if (app.from) drawMarker(app.from.point, COLORS.from, "Start");
 }
 
 function requestRender() {
@@ -904,9 +904,9 @@ function resize() {
   requestRender();
 }
 
-// --- État, panneau et URL -------------------------------------------------------
+// --- State, panel and URL -------------------------------------------------------
 
-/** Nom de lieu : la station de tram/métro proche si elle existe (plus parlante qu'un arrêt de bus), sinon l'arrêt le plus proche. */
+/** Place name: the nearby tram/subway station if there is one (more telling than a bus stop), otherwise the nearest stop. */
 function nearestStopName(point) {
   let best = null;
   let bestDistance = Infinity;
@@ -929,7 +929,7 @@ function nearestStopName(point) {
 function describePlace(point) {
   const stop = nearestStopName(point);
   const commune = communeAt(point);
-  return commune && commune !== CITY.name ? `Près de ${stop} (${commune})` : `Près de ${stop}`;
+  return commune && commune !== CITY.name ? `Near ${stop} (${commune})` : `Near ${stop}`;
 }
 
 function heatSource() {
@@ -1011,7 +1011,7 @@ function updatePanel() {
             badge.textContent = "🚶";
           }
           const text = document.createElement("span");
-          text.textContent = step.kind === "ride" ? `${step.text} · attente ~${Math.round(step.wait)} min` : step.text;
+          text.textContent = step.kind === "ride" ? `${step.text} · wait ~${Math.round(step.wait)} min` : step.text;
           const minutes = document.createElement("span");
           minutes.className = "minutes";
           minutes.textContent = formatMinutes(step.minutes);
@@ -1029,8 +1029,8 @@ function updatePanel() {
       return Math.min(byFoot, app.heatSolution.stationTime[index]) <= REACH_MINUTES;
     }).length;
     const percent = Math.round((reachable / tram.length) * 100);
-    const where = source === app.from ? "de ce départ" : "de cette arrivée";
-    $("reach").textContent = `${percent} % des ${CITY.railStations} sont à moins de ${REACH_MINUTES} minutes ${where}${
+    const where = source === app.from ? "from this start" : "from this destination";
+    $("reach").textContent = `${percent}% of ${CITY.railStations} are within ${REACH_MINUTES} minutes ${where}${
       app.includeBus ? ` (${CITY.railNoun} + ${CITY.busNoun})` : ""
     }.`;
   }
@@ -1108,7 +1108,7 @@ function toast(message) {
   }, 2200);
 }
 
-// --- Interactions sur la carte ----------------------------------------------
+// --- Map interactions ----------------------------------------------
 
 function eventPoint(event) {
   const rect = canvas.getBoundingClientRect();
@@ -1140,7 +1140,7 @@ canvas.addEventListener("pointerdown", (event) => {
   app.drag = marker
     ? { kind: "marker", marker, start: screen }
     : { kind: "pan", start: screen, last: screen, moved: false, slop: CLICK_SLOP[pointer] };
-  // Saisir un marqueur recentre la heatmap sur lui, comme sur la version parisienne.
+  // Grabbing a marker recenters the heat map on it, as on the Paris version.
   if (marker && marker !== app.heatFrom) setHeatFrom(marker);
 });
 
@@ -1185,7 +1185,7 @@ function endPointer(event) {
   canvas.classList.remove("panning");
   if (event.type === "pointercancel") return;
   if (drag.kind === "pan" && !drag.moved) {
-    if (!setTo(unproject(...eventPoint(event)))) toast("Ce point est hors de la Métropole ou sur l'eau.");
+    if (!setTo(unproject(...eventPoint(event)))) toast("This point is outside the metro area or on water.");
   } else if (drag.kind === "marker") {
     recompute();
     syncUrl();
@@ -1208,9 +1208,9 @@ canvas.addEventListener(
   { passive: false },
 );
 
-// --- Commandes ----------------------------------------------------------------
+// --- Controls ----------------------------------------------------------------
 
-// Changer de ville : le nom de la ville dans le titre ouvre un panneau avec recherche.
+// Switching cities: the city name in the title opens a panel with search.
 const cityPanel = $("cityPanel");
 const cityTrigger = $("cityTrigger");
 const citySearch = $("citySearch");
@@ -1227,7 +1227,7 @@ function setCityPanel(open) {
 }
 
 function filterCities() {
-  // Recherche sur le début des mots : « s » donne Saint-Étienne et Strasbourg, « et » Saint-Étienne.
+  // Search on word beginnings: "s" gives Saint-Étienne and Strasbourg, "et" gives Saint-Étienne.
   const query = normalize(citySearch.value);
   for (const item of cityItems) item.hidden = !normalize(item.dataset.name).split(" ").some((word) => word.startsWith(query));
 }
@@ -1259,7 +1259,7 @@ $("recenter").addEventListener("click", () => {
   fitView();
   requestRender();
 });
-// L'iPhone ne sait pas passer un élément de page en plein écran : on masque le bouton.
+// The iPhone can't fullscreen a page element: the button is hidden.
 $("fullscreen").hidden = !document.fullscreenEnabled;
 $("fullscreen").addEventListener("click", () => {
   if (document.fullscreenElement) document.exitFullscreen();
@@ -1288,7 +1288,7 @@ $("maxRange").addEventListener("input", (event) => {
 
 $("swap").addEventListener("click", () => {
   if (!app.to) {
-    toast("Posez d'abord une arrivée sur la carte.");
+    toast("First place a destination on the map.");
     return;
   }
   [app.from, app.to] = [app.to, app.from];
@@ -1307,20 +1307,20 @@ $("heatFrom").addEventListener("click", (event) => {
 
 $("locate").addEventListener("click", () => {
   if (!navigator.geolocation) {
-    toast("La géolocalisation n'est pas disponible.");
+    toast("Geolocation is not available.");
     return;
   }
   navigator.geolocation.getCurrentPosition(
     ({ coords }) => {
-      if (!setFrom(toWorld(coords.latitude, coords.longitude), "Ma position")) toast("Vous êtes hors de la Métropole.");
+      if (!setFrom(toWorld(coords.latitude, coords.longitude), "My location")) toast("You are outside the metro area.");
     },
     (error) =>
       toast(
         error.code === error.PERMISSION_DENIED
-          ? "Position refusée : autorisez la localisation, ou cherchez une adresse."
-          : "Impossible d'obtenir votre position : cherchez plutôt une adresse.",
+          ? "Location denied: allow location access, or search for an address."
+          : "Couldn't get your location — try searching for an address instead.",
       ),
-    // Sans délai maximal, certains navigateurs intégrés (X, Reddit…) n'appellent jamais aucun des deux rappels.
+    // Without a maximum timeout, some embedded browsers (X, Reddit…) never call either callback.
     { timeout: 10000, maximumAge: 60000 },
   );
 });
@@ -1332,18 +1332,18 @@ $("share").addEventListener("click", async () => {
       await navigator.share({ title: document.title, url });
       return;
     } catch {
-      /* partage annulé : on retombe sur la copie */
+      /* sharing cancelled: fall back to copying */
     }
   }
   try {
     await navigator.clipboard.writeText(url);
-    toast("Lien copié !");
+    toast("Link copied!");
   } catch {
     toast(url);
   }
 });
 
-// --- Recherche d'adresse (Base Adresse Nationale) ----------------------------
+// --- Address search (Base Adresse Nationale) ----------------------------
 
 const searchInput = $("searchInput");
 const searchResults = $("searchResults");
@@ -1359,7 +1359,7 @@ function normalize(text) {
     .trim();
 }
 
-/** Arrêts de tram dont le nom contient tous les mots tapés. */
+/** Tram stops whose name contains all typed words. */
 function searchStops(query) {
   const words = normalize(query).split(" ");
   return app.data.stations
@@ -1464,9 +1464,9 @@ $("searchForm").addEventListener("submit", async (event) => {
   try {
     const results = await searchAddress(query);
     if (results.length) chooseResult(results[0]);
-    else toast("Adresse introuvable dans la Métropole.");
+    else toast("Address not found in the metro area.");
   } catch (error) {
-    if (error.name !== "AbortError") toast("La recherche d'adresse ne répond pas.");
+    if (error.name !== "AbortError") toast("Address search is not responding.");
   }
 });
 
@@ -1474,7 +1474,7 @@ document.addEventListener("click", (event) => {
   if (!$("searchForm").contains(event.target)) searchResults.hidden = true;
 });
 
-// --- Démarrage ----------------------------------------------------------------
+// --- Startup ----------------------------------------------------------------
 
 async function init() {
   resize();
@@ -1492,5 +1492,5 @@ async function init() {
 
 init().catch((error) => {
   console.error(error);
-  $("tripFrom").textContent = "Impossible de charger le réseau.";
+  $("tripFrom").textContent = "Couldn't load the network.";
 });

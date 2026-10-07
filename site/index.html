@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>À portée de tram · Temps de trajet en tram et métro par ville</title>
-    <meta name="description" content="Cartes des temps de trajet en tram et métro à Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Bruxelles, Paris, Liège et Charleroi : la ville se colore selon le temps pour y aller." />
+    <title>Within Tram Reach · Tram and subway travel times by city</title>
+    <meta name="description" content="Tram and subway travel-time maps for Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Paris, Bruxelles, Liège, Toronto and Charleroi: the city is colored by how long it takes to get there." />
     <script>
-      // Anciens liens github.io : on renvoie vers le domaine du site en gardant départ et arrivée.
+      // Old github.io links: redirect to the site domain, keeping origin and destination.
       if (location.hostname.endsWith("github.io")) location.replace("https://tram.camilleroux.com/" + location.search);
     </script>
     <link rel="canonical" href="https://tram.camilleroux.com/" />
@@ -17,20 +17,20 @@
     <meta name="author" content="Camille Roux" />
     <link rel="author" href="https://www.camilleroux.com/" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="À portée de tram" />
-    <meta property="og:title" content="À portée de tram" />
-    <meta property="og:description" content="Cartes des temps de trajet en tram et métro à Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Bruxelles, Paris, Liège et Charleroi : la ville se colore selon le temps pour y aller." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Within Tram Reach" />
+    <meta property="og:title" content="Within Tram Reach" />
+    <meta property="og:description" content="Tram and subway travel-time maps for Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Paris, Bruxelles, Liège, Toronto and Charleroi: the city is colored by how long it takes to get there." />
     <meta property="og:url" content="https://tram.camilleroux.com/" />
     <meta property="og:image" content="https://tram.camilleroux.com/og/home.jpg?v=9952349f" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Cartes des temps de trajet en tram et métro à Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Bruxelles, Paris, Liège et Charleroi." />
+    <meta property="og:image:alt" content="Tram and subway travel-time maps for Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Paris, Bruxelles, Liège, Toronto and Charleroi." />
     <meta property="article:author" content="https://www.camilleroux.com/" />
     <meta property="article:published_time" content="2026-10-04T08:00:00+02:00" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="À portée de tram" />
-    <meta name="twitter:description" content="Cartes des temps de trajet en tram et métro à Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Bruxelles, Paris, Liège et Charleroi : la ville se colore selon le temps pour y aller." />
+    <meta name="twitter:title" content="Within Tram Reach" />
+    <meta name="twitter:description" content="Tram and subway travel-time maps for Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Paris, Bruxelles, Liège, Toronto and Charleroi: the city is colored by how long it takes to get there." />
     <meta name="twitter:image" content="https://tram.camilleroux.com/og/home.jpg?v=9952349f" />
     <script type="application/ld+json">
     {
@@ -39,178 +39,184 @@
         {
           "@type": "WebSite",
           "@id": "https://tram.camilleroux.com/#site",
-          "name": "À portée de tram",
+          "name": "Within Tram Reach",
           "url": "https://tram.camilleroux.com/",
-          "description": "Cartes des temps de trajet en tram et métro à Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Bruxelles, Paris, Liège et Charleroi : la ville se colore selon le temps pour y aller.",
-          "inLanguage": "fr",
+          "description": "Tram and subway travel-time maps for Montpellier, Bordeaux, Lyon, Toulouse, Marseille, Lille, Nantes, Strasbourg, Rennes, Grenoble, Nice, Angers, Tours, Dijon, Reims, Le Mans, Brest, Clermont-Ferrand, Saint-Étienne, Rouen, Besançon, Orléans, Montréal, Paris, Bruxelles, Liège, Toronto and Charleroi: the city is colored by how long it takes to get there.",
+          "inLanguage": "en",
           "author": {
             "@id": "https://www.camilleroux.com/#me"
           }
         },
         {
           "@type": "ItemList",
-          "name": "Cartes des temps de trajet par ville",
+          "name": "Travel-time maps by city",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
-              "name": "Montpellier à portée de tram",
+              "name": "Montpellier by tram",
               "url": "https://tram.camilleroux.com/montpellier/"
             },
             {
               "@type": "ListItem",
               "position": 2,
-              "name": "Bordeaux à portée de tram",
+              "name": "Bordeaux by tram",
               "url": "https://tram.camilleroux.com/bordeaux/"
             },
             {
               "@type": "ListItem",
               "position": 3,
-              "name": "Lyon à portée de métro",
+              "name": "Lyon by subway",
               "url": "https://tram.camilleroux.com/lyon/"
             },
             {
               "@type": "ListItem",
               "position": 4,
-              "name": "Toulouse à portée de métro",
+              "name": "Toulouse by subway",
               "url": "https://tram.camilleroux.com/toulouse/"
             },
             {
               "@type": "ListItem",
               "position": 5,
-              "name": "Marseille à portée de métro",
+              "name": "Marseille by subway",
               "url": "https://tram.camilleroux.com/marseille/"
             },
             {
               "@type": "ListItem",
               "position": 6,
-              "name": "Lille à portée de métro",
+              "name": "Lille by subway",
               "url": "https://tram.camilleroux.com/lille/"
             },
             {
               "@type": "ListItem",
               "position": 7,
-              "name": "Nantes à portée de tram",
+              "name": "Nantes by tram",
               "url": "https://tram.camilleroux.com/nantes/"
             },
             {
               "@type": "ListItem",
               "position": 8,
-              "name": "Strasbourg à portée de tram",
+              "name": "Strasbourg by tram",
               "url": "https://tram.camilleroux.com/strasbourg/"
             },
             {
               "@type": "ListItem",
               "position": 9,
-              "name": "Rennes à portée de métro",
+              "name": "Rennes by subway",
               "url": "https://tram.camilleroux.com/rennes/"
             },
             {
               "@type": "ListItem",
               "position": 10,
-              "name": "Grenoble à portée de tram",
+              "name": "Grenoble by tram",
               "url": "https://tram.camilleroux.com/grenoble/"
             },
             {
               "@type": "ListItem",
               "position": 11,
-              "name": "Nice à portée de tram",
+              "name": "Nice by tram",
               "url": "https://tram.camilleroux.com/nice/"
             },
             {
               "@type": "ListItem",
               "position": 12,
-              "name": "Angers à portée de tram",
+              "name": "Angers by tram",
               "url": "https://tram.camilleroux.com/angers/"
             },
             {
               "@type": "ListItem",
               "position": 13,
-              "name": "Tours à portée de tram",
+              "name": "Tours by tram",
               "url": "https://tram.camilleroux.com/tours/"
             },
             {
               "@type": "ListItem",
               "position": 14,
-              "name": "Dijon à portée de tram",
+              "name": "Dijon by tram",
               "url": "https://tram.camilleroux.com/dijon/"
             },
             {
               "@type": "ListItem",
               "position": 15,
-              "name": "Reims à portée de tram",
+              "name": "Reims by tram",
               "url": "https://tram.camilleroux.com/reims/"
             },
             {
               "@type": "ListItem",
               "position": 16,
-              "name": "Le Mans à portée de tram",
+              "name": "Le Mans by tram",
               "url": "https://tram.camilleroux.com/le-mans/"
             },
             {
               "@type": "ListItem",
               "position": 17,
-              "name": "Brest à portée de tram",
+              "name": "Brest by tram",
               "url": "https://tram.camilleroux.com/brest/"
             },
             {
               "@type": "ListItem",
               "position": 18,
-              "name": "Clermont-Ferrand à portée de tram",
+              "name": "Clermont-Ferrand by tram",
               "url": "https://tram.camilleroux.com/clermont-ferrand/"
             },
             {
               "@type": "ListItem",
               "position": 19,
-              "name": "Saint-Étienne à portée de tram",
+              "name": "Saint-Étienne by tram",
               "url": "https://tram.camilleroux.com/saint-etienne/"
             },
             {
               "@type": "ListItem",
               "position": 20,
-              "name": "Rouen à portée de métro",
+              "name": "Rouen by subway",
               "url": "https://tram.camilleroux.com/rouen/"
             },
             {
               "@type": "ListItem",
               "position": 21,
-              "name": "Besançon à portée de tram",
+              "name": "Besançon by tram",
               "url": "https://tram.camilleroux.com/besancon/"
             },
             {
               "@type": "ListItem",
               "position": 22,
-              "name": "Orléans à portée de tram",
+              "name": "Orléans by tram",
               "url": "https://tram.camilleroux.com/orleans/"
             },
             {
               "@type": "ListItem",
               "position": 23,
-              "name": "Montréal à portée de métro",
+              "name": "Montréal by subway",
               "url": "https://tram.camilleroux.com/montreal/"
             },
             {
               "@type": "ListItem",
               "position": 24,
-              "name": "Bruxelles à portée de métro",
-              "url": "https://tram.camilleroux.com/bruxelles/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 25,
-              "name": "Paris à portée de métro",
+              "name": "Paris by subway",
               "url": "https://tram.camilleroux.com/paris/"
             },
             {
               "@type": "ListItem",
+              "position": 25,
+              "name": "Bruxelles by subway",
+              "url": "https://tram.camilleroux.com/bruxelles/"
+            },
+            {
+              "@type": "ListItem",
               "position": 26,
-              "name": "Liège à portée de tram",
+              "name": "Liège by tram",
               "url": "https://tram.camilleroux.com/liege/"
             },
             {
               "@type": "ListItem",
               "position": 27,
-              "name": "Charleroi à portée de métro",
+              "name": "Toronto by subway",
+              "url": "https://tram.camilleroux.com/toronto/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 28,
+              "name": "Charleroi by subway",
               "url": "https://tram.camilleroux.com/charleroi/"
             }
           ]
@@ -220,42 +226,42 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "D'où viennent les temps de trajet ?",
+              "name": "Where do the travel times come from?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Des horaires théoriques officiels de chaque réseau (TaM (Montpellier), TBM (Bordeaux), TCL (Lyon), Tisséo (Toulouse), RTM (Marseille), Ilévia (Lille), Naolib (Nantes), CTS (Strasbourg), STAR (Rennes), M réso (Grenoble), Lignes d'Azur (Nice), Irigo (Angers), Fil Bleu (Tours), Divia (Dijon), Citura (Reims), SETRAM (Le Mans), Bibus (Brest), T2C (Clermont-Ferrand), STAS (Saint-Étienne), Astuce (Rouen), Ginko (Besançon), TAO (Orléans), STM et REM (Montréal), STIB (Bruxelles), Île-de-France Mobilités (Paris), TEC (Liège), TEC (Charleroi)), publiés en open data au format GTFS. Ils correspondent à un jour de semaine ordinaire, entre 7 h et 20 h."
+                "text": "From the official scheduled timetables of each network (TaM (Montpellier), TBM (Bordeaux), TCL (Lyon), Tisséo (Toulouse), RTM (Marseille), Ilévia (Lille), Naolib (Nantes), CTS (Strasbourg), STAR (Rennes), M réso (Grenoble), Lignes d'Azur (Nice), Irigo (Angers), Fil Bleu (Tours), Divia (Dijon), Citura (Reims), SETRAM (Le Mans), Bibus (Brest), T2C (Clermont-Ferrand), STAS (Saint-Étienne), Astuce (Rouen), Ginko (Besançon), TAO (Orléans), STM et REM (Montréal), Île-de-France Mobilités (Paris), STIB (Bruxelles), TEC (Liège), TTC (Toronto), TEC (Charleroi)), published as open data in GTFS format. They cover an ordinary weekday, between 7 a.m. and 8 p.m."
               }
             },
             {
               "@type": "Question",
-              "name": "Les temps affichés sont-ils fiables ?",
+              "name": "Are the displayed times reliable?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Ce sont des moyennes « sur le papier » : marche jusqu'à l'arrêt, attente égale à la moitié de l'intervalle entre deux passages, durée prévue entre les arrêts et correspondances. Pas de temps réel ni de perturbations."
+                "text": "These are \"on paper\" averages: walk to the stop, waiting time equal to half the interval between two services, scheduled time between stops, and transfers. No real-time data or disruptions."
               }
             },
             {
               "@type": "Question",
-              "name": "Le bus est-il pris en compte ?",
+              "name": "Are buses included?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Oui, en option sur chaque carte. Par défaut, seuls le tram, le métro et les transports guidés sont affichés, pour montrer l'ossature du réseau."
+                "text": "Yes, optionally on each map. By default, only trams, subways and guided transit are shown, to highlight the backbone of the network."
               }
             },
             {
               "@type": "Question",
-              "name": "Ma ville n'y est pas, pourquoi ?",
+              "name": "My city isn't there — why?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Il faut un réseau de tram ou de métro et des horaires publiés en open data. Les prochaines villes sont ajoutées au fur et à mesure : vous pouvez en proposer une sur GitHub, et chaque nouvelle ville est annoncée sur X et LinkedIn."
+                "text": "It needs a tram or subway network with timetables published as open data. New cities are added over time: you can suggest one on GitHub, and each new city is announced on X and LinkedIn."
               }
             },
             {
               "@type": "Question",
-              "name": "Qui a réalisé ce site ?",
+              "name": "Who made this site?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "L'idée vient du NYC Transit Time Cartogram d'Anthony Castrio, adapté ensuite à Paris par Jules Grandin (« C'est encore loin ? »). Ces cartes sont réalisées par Camille Roux, développeur et co-fondateur de Human Coders à Montpellier, qui présente ses autres réalisations et sa veille tech hebdomadaire sur camilleroux.com. Le code est ouvert sur GitHub."
+                "text": "The idea comes from Anthony Castrio's NYC Transit Time Cartogram, later adapted to Paris by Jules Grandin (\"C'est encore loin ?\"). These maps are made by Camille Roux, developer and co-founder of Human Coders in Montpellier, who showcases his other projects and his weekly tech watch on camilleroux.com. The code is open on GitHub."
               }
             }
           ]
@@ -266,7 +272,7 @@
           "name": "Camille Roux",
           "url": "https://www.camilleroux.com/",
           "image": "https://www.camilleroux.com/content/images/size/w256h256/format/jpeg/2025/05/camillecouleur---lowres-2.jpg",
-          "jobTitle": "Développeur, co-fondateur de Human Coders",
+          "jobTitle": "Developer, co-founder of Human Coders",
           "worksFor": {
             "@type": "Organization",
             "name": "Human Coders",
@@ -291,17 +297,17 @@
     <link rel="preconnect" href="https://fonts.bunny.net" />
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" />
     <script>
-      // Les liens partagés avant l'arrivée des autres villes (?from=…&to=…) ouvraient la carte de Montpellier.
+      // Shared links from before the other cities arrived (?from=…&to=…) opened the Montpellier map.
       if (/[?&](from|to)=/.test(location.search)) location.replace("./montpellier/" + location.search);
     </script>
     <link rel="stylesheet" href="./styles.css?v=9e078b8e" />
   </head>
   <body>
     <header class="topbar">
-      <nav class="topbar-inner" aria-label="Navigation principale">
-        <a class="brand" href="./"><img src="./favicon.svg" width="22" height="22" alt="" /> À portée de tram</a>
+      <nav class="topbar-inner" aria-label="Main navigation">
+        <a class="brand" href="./"><img src="./favicon.svg" width="22" height="22" alt="" /> Within Tram Reach</a>
         <div class="topbar-links">
-          <a class="topbar-link" href="./classements/">🏆 Classements</a>
+          <a class="topbar-link" href="./rankings/">🏆 Rankings</a>
           <a class="topbar-link" href="https://www.camilleroux.com/" rel="author">camilleroux.com</a>
         </div>
       </nav>
@@ -309,13 +315,13 @@
 
     <main class="page">
       <section class="hero">
-        <span class="chip">🚋 27 villes en France, en Belgique et au Québec</span>
-        <h1>À portée de&nbsp;tram</h1>
+        <span class="chip">🚋 28 cities in France, in Belgium and in Quebec</span>
+        <h1>Within Tram&nbsp;Reach</h1>
         <p class="lede">
-          Combien de temps faut-il vraiment pour traverser sa ville en tram ou en métro&nbsp;? Choisissez une ville, posez un
-          départ&nbsp;: toute la métropole se colore selon le temps de trajet, calculé à partir des horaires officiels.
+          How long does it really take to cross your city by tram or subway? Pick a city, set a
+          start point: the whole metro area is colored by travel time, computed from the official schedules.
         </p>
-        <nav class="city-switch" aria-label="Aller directement à une ville">
+        <nav class="city-switch" aria-label="Go directly to a city">
           <a class="chip" href="./angers/">Angers</a>
           <a class="chip" href="./besancon/">Besançon</a>
           <a class="chip" href="./bordeaux/">Bordeaux</a>
@@ -341,269 +347,277 @@
           <a class="chip" href="./rouen/">Rouen</a>
           <a class="chip" href="./saint-etienne/">Saint-Étienne</a>
           <a class="chip" href="./strasbourg/">Strasbourg</a>
+          <a class="chip" href="./toronto/">Toronto</a>
           <a class="chip" href="./toulouse/">Toulouse</a>
           <a class="chip" href="./tours/">Tours</a>
         </nav>
       </section>
 
       <section aria-labelledby="cities-title">
-        <h2 id="cities-title" class="visually-hidden">Choisir une ville</h2>
+        <h2 id="cities-title" class="visually-hidden">Choose a city</h2>
         <div class="city-grid large">
           <a class="city-card" href="./montpellier/">
             <img src="./og/thumb-montpellier.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Montpellier à portée de tram</h2>
-              <span>88&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de la Comédie) · réseau TaM</span>
+              <h2>Montpellier by tram</h2>
+              <span>88% of tram stations within 30 min of downtown (Place de la Comédie) · TaM network</span>
             </span>
           </a>
           <a class="city-card" href="./bordeaux/">
             <img src="./og/thumb-bordeaux.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Bordeaux à portée de tram</h2>
-              <span>71&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place des Quinconces) · réseau TBM</span>
+              <h2>Bordeaux by tram</h2>
+              <span>71% of tram stations within 30 min of downtown (Place des Quinconces) · TBM network</span>
             </span>
           </a>
           <a class="city-card" href="./lyon/">
             <img src="./og/thumb-lyon.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Lyon à portée de métro</h2>
-              <span>75&nbsp;% des stations de métro et de tram à moins de 30&nbsp;min du centre (Place Bellecour) · réseau TCL</span>
+              <h2>Lyon by subway</h2>
+              <span>75% of subway and tram stations within 30 min of downtown (Place Bellecour) · TCL network</span>
             </span>
           </a>
           <a class="city-card" href="./toulouse/">
             <img src="./og/thumb-toulouse.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Toulouse à portée de métro</h2>
-              <span>79&nbsp;% des stations de métro et de tram à moins de 30&nbsp;min du centre (Place du Capitole) · réseau Tisséo</span>
+              <h2>Toulouse by subway</h2>
+              <span>79% of subway and tram stations within 30 min of downtown (Place du Capitole) · Tisséo network</span>
             </span>
           </a>
           <a class="city-card" href="./marseille/">
             <img src="./og/thumb-marseille.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Marseille à portée de métro</h2>
-              <span>98&nbsp;% des stations de métro et de tram à moins de 30&nbsp;min du centre (Vieux-Port) · réseau RTM</span>
+              <h2>Marseille by subway</h2>
+              <span>98% of subway and tram stations within 30 min of downtown (Vieux-Port) · RTM network</span>
             </span>
           </a>
           <a class="city-card" href="./lille/">
             <img src="./og/thumb-lille.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Lille à portée de métro</h2>
-              <span>75&nbsp;% des stations de métro et de tram à moins de 30&nbsp;min du centre (Grand&#x27;Place) · réseau Ilévia</span>
+              <h2>Lille by subway</h2>
+              <span>75% of subway and tram stations within 30 min of downtown (Grand&#x27;Place) · Ilévia network</span>
             </span>
           </a>
           <a class="city-card" href="./nantes/">
             <img src="./og/thumb-nantes.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Nantes à portée de tram</h2>
-              <span>96&nbsp;% des stations de tram et de Busway à moins de 30&nbsp;min du centre (Place du Commerce) · réseau Naolib</span>
+              <h2>Nantes by tram</h2>
+              <span>96% of stations de tram et de Busway within 30 min of downtown (Place du Commerce) · Naolib network</span>
             </span>
           </a>
           <a class="city-card" href="./strasbourg/">
             <img src="./og/thumb-strasbourg.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Strasbourg à portée de tram</h2>
-              <span>95&nbsp;% des stations de tram et de BHNS à moins de 30&nbsp;min du centre (Place Kléber) · réseau CTS</span>
+              <h2>Strasbourg by tram</h2>
+              <span>95% of stations de tram et de BHNS within 30 min of downtown (Place Kléber) · CTS network</span>
             </span>
           </a>
           <a class="city-card" href="./rennes/">
             <img src="./og/thumb-rennes.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Rennes à portée de métro</h2>
-              <span>100&nbsp;% des stations de métro à moins de 30&nbsp;min du centre (Place de la République) · réseau STAR</span>
+              <h2>Rennes by subway</h2>
+              <span>100% of subway stations within 30 min of downtown (Place de la République) · STAR network</span>
             </span>
           </a>
           <a class="city-card" href="./grenoble/">
             <img src="./og/thumb-grenoble.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Grenoble à portée de tram</h2>
-              <span>90&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place Victor-Hugo) · réseau M réso</span>
+              <h2>Grenoble by tram</h2>
+              <span>90% of tram stations within 30 min of downtown (Place Victor-Hugo) · M réso network</span>
             </span>
           </a>
           <a class="city-card" href="./nice/">
             <img src="./og/thumb-nice.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Nice à portée de tram</h2>
-              <span>72&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place Masséna) · réseau Lignes d&#x27;Azur</span>
+              <h2>Nice by tram</h2>
+              <span>72% of tram stations within 30 min of downtown (Place Masséna) · Lignes d&#x27;Azur network</span>
             </span>
           </a>
           <a class="city-card" href="./angers/">
             <img src="./og/thumb-angers.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Angers à portée de tram</h2>
-              <span>90&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place du Ralliement) · réseau Irigo</span>
+              <h2>Angers by tram</h2>
+              <span>90% of tram stations within 30 min of downtown (Place du Ralliement) · Irigo network</span>
             </span>
           </a>
           <a class="city-card" href="./tours/">
             <img src="./og/thumb-tours.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Tours à portée de tram</h2>
-              <span>97&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place Jean-Jaurès) · réseau Fil Bleu</span>
+              <h2>Tours by tram</h2>
+              <span>97% of tram stations within 30 min of downtown (Place Jean-Jaurès) · Fil Bleu network</span>
             </span>
           </a>
           <a class="city-card" href="./dijon/">
             <img src="./og/thumb-dijon.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Dijon à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place Darcy) · réseau Divia</span>
+              <h2>Dijon by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place Darcy) · Divia network</span>
             </span>
           </a>
           <a class="city-card" href="./reims/">
             <img src="./og/thumb-reims.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Reims à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place d&#x27;Erlon) · réseau Citura</span>
+              <h2>Reims by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place d&#x27;Erlon) · Citura network</span>
             </span>
           </a>
           <a class="city-card" href="./le-mans/">
             <img src="./og/thumb-le-mans.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Le Mans à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de la République) · réseau SETRAM</span>
+              <h2>Le Mans by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place de la République) · SETRAM network</span>
             </span>
           </a>
           <a class="city-card" href="./brest/">
             <img src="./og/thumb-brest.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Brest à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de la Liberté) · réseau Bibus</span>
+              <h2>Brest by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place de la Liberté) · Bibus network</span>
             </span>
           </a>
           <a class="city-card" href="./clermont-ferrand/">
             <img src="./og/thumb-clermont-ferrand.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Clermont-Ferrand à portée de tram</h2>
-              <span>94&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de Jaude) · réseau T2C</span>
+              <h2>Clermont-Ferrand by tram</h2>
+              <span>94% of tram stations within 30 min of downtown (Place de Jaude) · T2C network</span>
             </span>
           </a>
           <a class="city-card" href="./saint-etienne/">
             <img src="./og/thumb-saint-etienne.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Saint-Étienne à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de l&#x27;Hôtel-de-Ville) · réseau STAS</span>
+              <h2>Saint-Étienne by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place de l&#x27;Hôtel-de-Ville) · STAS network</span>
             </span>
           </a>
           <a class="city-card" href="./rouen/">
             <img src="./og/thumb-rouen.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Rouen à portée de métro</h2>
-              <span>74&nbsp;% des stations de métro à moins de 30&nbsp;min du centre (Hôtel de Ville) · réseau Astuce</span>
+              <h2>Rouen by subway</h2>
+              <span>74% of subway stations within 30 min of downtown (Hôtel de Ville) · Astuce network</span>
             </span>
           </a>
           <a class="city-card" href="./besancon/">
             <img src="./og/thumb-besancon.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Besançon à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place de la Révolution) · réseau Ginko</span>
+              <h2>Besançon by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place de la Révolution) · Ginko network</span>
             </span>
           </a>
           <a class="city-card" href="./orleans/">
             <img src="./og/thumb-orleans.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Orléans à portée de tram</h2>
-              <span>96&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place du Martroi) · réseau TAO</span>
+              <h2>Orléans by tram</h2>
+              <span>96% of tram stations within 30 min of downtown (Place du Martroi) · TAO network</span>
             </span>
           </a>
           <a class="city-card" href="./montreal/">
             <img src="./og/thumb-montreal.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Montréal à portée de métro</h2>
-              <span>88&nbsp;% des stations de métro à moins de 30&nbsp;min du centre (Place Émilie-Gamelin) · réseau STM et REM</span>
-            </span>
-          </a>
-          <a class="city-card" href="./bruxelles/">
-            <img src="./og/thumb-bruxelles.jpg" width="600" height="315" alt="" loading="lazy" />
-            <span class="city-card-body">
-              <h2>Bruxelles à portée de métro</h2>
-              <span>53&nbsp;% des stations de métro et de tram à moins de 30&nbsp;min du centre (Grand-Place) · réseau STIB</span>
+              <h2>Montréal by subway</h2>
+              <span>88% of subway stations within 30 min of downtown (Place Émilie-Gamelin) · STM et REM network</span>
             </span>
           </a>
           <a class="city-card" href="./paris/">
             <img src="./og/thumb-paris.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Paris à portée de métro</h2>
-              <span>63&nbsp;% des stations de métro, de RER, de Transilien et de tram à moins de 30&nbsp;min du centre (Châtelet) · réseau Île-de-France Mobilités</span>
+              <h2>Paris by subway</h2>
+              <span>63% of stations de métro, de RER, de Transilien et de tram within 30 min of downtown (Châtelet) · Île-de-France Mobilités network</span>
+            </span>
+          </a>
+          <a class="city-card" href="./bruxelles/">
+            <img src="./og/thumb-bruxelles.jpg" width="600" height="315" alt="" loading="lazy" />
+            <span class="city-card-body">
+              <h2>Bruxelles by subway</h2>
+              <span>53% of subway and tram stations within 30 min of downtown (Grand-Place) · STIB network</span>
             </span>
           </a>
           <a class="city-card" href="./liege/">
             <img src="./og/thumb-liege.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Liège à portée de tram</h2>
-              <span>100&nbsp;% des stations de tram à moins de 30&nbsp;min du centre (Place Saint-Lambert) · réseau TEC</span>
+              <h2>Liège by tram</h2>
+              <span>100% of tram stations within 30 min of downtown (Place Saint-Lambert) · TEC network</span>
+            </span>
+          </a>
+          <a class="city-card" href="./toronto/">
+            <img src="./og/thumb-toronto.jpg" width="600" height="315" alt="" loading="lazy" />
+            <span class="city-card-body">
+              <h2>Toronto by subway</h2>
+              <span>36% of subway and tram stations within 30 min of downtown (Yonge-Dundas Square) · TTC network</span>
             </span>
           </a>
           <a class="city-card" href="./charleroi/">
             <img src="./og/thumb-charleroi.jpg" width="600" height="315" alt="" loading="lazy" />
             <span class="city-card-body">
-              <h2>Charleroi à portée de métro</h2>
-              <span>65&nbsp;% des stations de métro à moins de 30&nbsp;min du centre (Place Charles II) · réseau TEC</span>
+              <h2>Charleroi by subway</h2>
+              <span>65% of subway stations within 30 min of downtown (Place Charles II) · TEC network</span>
             </span>
           </a>
         </div>
-        <aside class="follow-card" aria-label="Nouvelles villes">
+        <aside class="follow-card" aria-label="New cities">
           <div class="follow-text">
-            <p class="follow-title">Suivre les nouvelles villes</p>
-            <p>Chaque nouvelle ville est annoncée sur X et LinkedIn. La vôtre n'est pas encore là&nbsp;?
-            <a href="https://github.com/camilleroux/montpellier-temps-transport/issues" rel="noopener">Proposez-la sur GitHub</a>.</p>
+            <p class="follow-title">Follow new cities</p>
+            <p>Every new city is announced on X and LinkedIn. Yours isn't there yet?
+            <a href="https://github.com/camilleroux/montpellier-temps-transport/issues" rel="noopener">Suggest it on GitHub</a>.</p>
           </div>
           <div class="follow-actions">
-            <a class="button follow-x" href="https://x.com/CamilleRoux" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg> Suivre sur X</a>
-            <a class="button follow-linkedin" href="https://www.linkedin.com/in/camilleroux" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 4.9v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg> Suivre sur LinkedIn</a>
+            <a class="button follow-x" href="https://x.com/CamilleRoux" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg> Follow on X</a>
+            <a class="button follow-linkedin" href="https://www.linkedin.com/in/camilleroux" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 4.9v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg> Follow on LinkedIn</a>
           </div>
         </aside>
       </section>
 
       <section class="section ranking-teaser" aria-labelledby="rank-title">
-        <h2 id="rank-title">🏆 Les classements</h2>
-        <p>Quel métro passe le plus souvent&nbsp;? Quelle station voit défiler le plus de rames&nbsp;? Quelle ligne est la plus
-        longue à parcourir&nbsp;? Où rentre-t-on le plus tard le samedi soir&nbsp;? <a href="./classements/">Voir les classements des trams et métros →</a></p>
+        <h2 id="rank-title">🏆 Rankings</h2>
+        <p>Which subway runs most often? Which station sees the most trains go by? Which line takes the longest to ride?
+        Where can you get home latest on a Saturday night? <a href="./rankings/">See the tram and subway rankings →</a></p>
       </section>
 
       <section class="section" aria-labelledby="how-title">
-        <h2 id="how-title">Comment ça marche</h2>
+        <h2 id="how-title">How it works</h2>
         <ol class="steps large">
-          <li><strong>1. Choisissez un départ</strong> Une adresse, une station ou votre position : la carte se colore autour.</li>
-          <li><strong>2. Cliquez une arrivée</strong> Vous obtenez la durée et l'itinéraire : ligne à prendre, correspondances, marche.</li>
-          <li><strong>3. Comparez</strong> Les courbes 15 et 30 minutes montrent ce qui est vraiment proche, en tram, en métro ou en bus.</li>
+          <li><strong>1. Pick a start</strong> An address, a station, or your location: the map colors around it.</li>
+          <li><strong>2. Click a destination</strong> You get the duration and the itinerary: which line to take, transfers, walking.</li>
+          <li><strong>3. Compare</strong> The 15- and 30-minute curves show what is really close, by tram, subway, or bus.</li>
         </ol>
       </section>
 
       <section class="section" aria-labelledby="faq-title">
-        <h2 id="faq-title">Questions fréquentes</h2>
-        <details class="faq"><summary>D&#x27;où viennent les temps de trajet ?</summary><p>Des horaires théoriques officiels de chaque réseau (TaM (Montpellier), TBM (Bordeaux), TCL (Lyon), Tisséo (Toulouse), RTM (Marseille), Ilévia (Lille), Naolib (Nantes), CTS (Strasbourg), STAR (Rennes), M réso (Grenoble), Lignes d&#x27;Azur (Nice), Irigo (Angers), Fil Bleu (Tours), Divia (Dijon), Citura (Reims), SETRAM (Le Mans), Bibus (Brest), T2C (Clermont-Ferrand), STAS (Saint-Étienne), Astuce (Rouen), Ginko (Besançon), TAO (Orléans), STM et REM (Montréal), STIB (Bruxelles), Île-de-France Mobilités (Paris), TEC (Liège), TEC (Charleroi)), publiés en open data au format GTFS. Ils correspondent à un jour de semaine ordinaire, entre 7 h et 20 h.</p></details>
-        <details class="faq"><summary>Les temps affichés sont-ils fiables ?</summary><p>Ce sont des moyennes « sur le papier » : marche jusqu&#x27;à l&#x27;arrêt, attente égale à la moitié de l&#x27;intervalle entre deux passages, durée prévue entre les arrêts et correspondances. Pas de temps réel ni de perturbations.</p></details>
-        <details class="faq"><summary>Le bus est-il pris en compte ?</summary><p>Oui, en option sur chaque carte. Par défaut, seuls le tram, le métro et les transports guidés sont affichés, pour montrer l&#x27;ossature du réseau.</p></details>
-        <details class="faq"><summary>Ma ville n&#x27;y est pas, pourquoi ?</summary><p>Il faut un réseau de tram ou de métro et des horaires publiés en open data. Les prochaines villes sont ajoutées au fur et à mesure&nbsp;: vous pouvez en <a href="https://github.com/camilleroux/montpellier-temps-transport/issues">proposer une sur GitHub</a>, et chaque nouvelle ville est annoncée sur <a href="https://x.com/CamilleRoux">X</a> et <a href="https://www.linkedin.com/in/camilleroux">LinkedIn</a>.</p></details>
-        <details class="faq"><summary>Qui a réalisé ce site ?</summary><p>L'idée vient du <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> d'Anthony Castrio, adapté ensuite à Paris par Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>). Ces cartes sont réalisées par <a href="https://www.camilleroux.com/" rel="author">Camille Roux</a>, développeur et co-fondateur de Human Coders à Montpellier&nbsp;: découvrez <a href="https://www.camilleroux.com/realisations/">ses autres réalisations</a> et <a href="https://www.camilleroux.com/veille/">sa veille tech hebdomadaire</a>. Le code est ouvert sur <a href="https://github.com/camilleroux/montpellier-temps-transport">GitHub</a>.</p></details>
+        <h2 id="faq-title">Frequently asked questions</h2>
+        <details class="faq"><summary>Where do the travel times come from?</summary><p>From the official scheduled timetables of each network (TaM (Montpellier), TBM (Bordeaux), TCL (Lyon), Tisséo (Toulouse), RTM (Marseille), Ilévia (Lille), Naolib (Nantes), CTS (Strasbourg), STAR (Rennes), M réso (Grenoble), Lignes d&#x27;Azur (Nice), Irigo (Angers), Fil Bleu (Tours), Divia (Dijon), Citura (Reims), SETRAM (Le Mans), Bibus (Brest), T2C (Clermont-Ferrand), STAS (Saint-Étienne), Astuce (Rouen), Ginko (Besançon), TAO (Orléans), STM et REM (Montréal), Île-de-France Mobilités (Paris), STIB (Bruxelles), TEC (Liège), TTC (Toronto), TEC (Charleroi)), published as open data in GTFS format. They cover an ordinary weekday, between 7 a.m. and 8 p.m.</p></details>
+        <details class="faq"><summary>Are the displayed times reliable?</summary><p>These are &quot;on paper&quot; averages: walk to the stop, waiting time equal to half the interval between two services, scheduled time between stops, and transfers. No real-time data or disruptions.</p></details>
+        <details class="faq"><summary>Are buses included?</summary><p>Yes, optionally on each map. By default, only trams, subways and guided transit are shown, to highlight the backbone of the network.</p></details>
+        <details class="faq"><summary>My city isn&#x27;t there — why?</summary><p>It needs a tram or subway network with timetables published as open data. New cities are added over time: you can <a href="https://github.com/camilleroux/montpellier-temps-transport/issues">suggest one on GitHub</a>, and each new city is announced on <a href="https://x.com/CamilleRoux">X</a> and <a href="https://www.linkedin.com/in/camilleroux">LinkedIn</a>.</p></details>
+        <details class="faq"><summary>Who made this site?</summary><p>The idea comes from <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> by Anthony Castrio, later adapted to Paris by Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>). These maps are made by <a href="https://www.camilleroux.com/" rel="author">Camille Roux</a>, developer and co-founder of Human Coders in Montpellier: see <a href="https://www.camilleroux.com/realisations/">his other projects</a> and <a href="https://www.camilleroux.com/veille/">his weekly tech watch</a>. The code is open on <a href="https://github.com/camilleroux/montpellier-temps-transport">GitHub</a>.</p></details>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="footer-inner">
         <p class="footer-author">
-          Un projet de <a href="https://www.camilleroux.com/" rel="author">Camille Roux</a>, développeur et co-fondateur de Human Coders,
-          à Montpellier, d'après l'idée d'Anthony Castrio et de Jules Grandin. Découvrez
-          <a href="https://www.camilleroux.com/realisations/">ses autres réalisations</a> et sa
-          <a href="https://www.camilleroux.com/veille/">veille tech hebdomadaire</a>.
+          A project by <a href="https://www.camilleroux.com/" rel="author">Camille Roux</a>, developer and co-founder of Human Coders,
+          in Montpellier, based on the idea by Anthony Castrio and Jules Grandin. See
+          <a href="https://www.camilleroux.com/realisations/">his other projects</a> and his
+          <a href="https://www.camilleroux.com/veille/">weekly tech watch</a>.
         </p>
-        <p class="footer-links">Villes&nbsp;: <a href="./angers/">Angers</a> · <a href="./besancon/">Besançon</a> · <a href="./bordeaux/">Bordeaux</a> · <a href="./brest/">Brest</a> · <a href="./bruxelles/">Bruxelles</a> · <a href="./charleroi/">Charleroi</a> · <a href="./clermont-ferrand/">Clermont-Ferrand</a> · <a href="./dijon/">Dijon</a> · <a href="./grenoble/">Grenoble</a> · <a href="./le-mans/">Le Mans</a> · <a href="./lille/">Lille</a> · <a href="./liege/">Liège</a> · <a href="./lyon/">Lyon</a> · <a href="./marseille/">Marseille</a> · <a href="./montpellier/">Montpellier</a> · <a href="./montreal/">Montréal</a> · <a href="./nantes/">Nantes</a> · <a href="./nice/">Nice</a> · <a href="./orleans/">Orléans</a> · <a href="./paris/">Paris</a> · <a href="./reims/">Reims</a> · <a href="./rennes/">Rennes</a> · <a href="./rouen/">Rouen</a> · <a href="./saint-etienne/">Saint-Étienne</a> · <a href="./strasbourg/">Strasbourg</a> · <a href="./toulouse/">Toulouse</a> · <a href="./tours/">Tours</a></p>
+        <p class="footer-links">Cities: <a href="./angers/">Angers</a> · <a href="./besancon/">Besançon</a> · <a href="./bordeaux/">Bordeaux</a> · <a href="./brest/">Brest</a> · <a href="./bruxelles/">Bruxelles</a> · <a href="./charleroi/">Charleroi</a> · <a href="./clermont-ferrand/">Clermont-Ferrand</a> · <a href="./dijon/">Dijon</a> · <a href="./grenoble/">Grenoble</a> · <a href="./le-mans/">Le Mans</a> · <a href="./lille/">Lille</a> · <a href="./liege/">Liège</a> · <a href="./lyon/">Lyon</a> · <a href="./marseille/">Marseille</a> · <a href="./montpellier/">Montpellier</a> · <a href="./montreal/">Montréal</a> · <a href="./nantes/">Nantes</a> · <a href="./nice/">Nice</a> · <a href="./orleans/">Orléans</a> · <a href="./paris/">Paris</a> · <a href="./reims/">Reims</a> · <a href="./rennes/">Rennes</a> · <a href="./rouen/">Rouen</a> · <a href="./saint-etienne/">Saint-Étienne</a> · <a href="./strasbourg/">Strasbourg</a> · <a href="./toronto/">Toronto</a> · <a href="./toulouse/">Toulouse</a> · <a href="./tours/">Tours</a></p>
         <p class="footer-links">
-          <a href="https://github.com/camilleroux/montpellier-temps-transport" rel="noopener">Code source sur GitHub</a> ·
-          <a href="https://github.com/camilleroux/montpellier-temps-transport/issues" rel="noopener">Proposer une ville ou signaler une erreur</a> ·
-          <a href="./classements/">Classements</a> ·
-          <a href="./mentions-legales/">Mentions légales et licences</a>
+          <a href="https://github.com/camilleroux/montpellier-temps-transport" rel="noopener">Source code on GitHub</a> ·
+          <a href="https://github.com/camilleroux/montpellier-temps-transport/issues" rel="noopener">Suggest a city or report an error</a> ·
+          <a href="./rankings/">Rankings</a> ·
+          <a href="./mentions-legales/">Legal notice and licenses</a>
         </p>
         <p class="footer-credits">
-          Idée originale&nbsp;: le <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> d'Anthony Castrio,
-          adapté ensuite à Paris par Jules Grandin
+          Original idea: Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>,
+          later adapted to Paris by Jules Grandin
           (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>).
-          Horaires&nbsp;: GTFS des réseaux de chaque ville (détail dans les mentions légales). Fond de carte © <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>,
-          <a href="https://geo.api.gouv.fr/">contours communaux</a>, recherche d'adresse via la
+          Timetables: GTFS feeds from each city's network (details in the legal notice). Basemap © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>,
+          <a href="https://geo.api.gouv.fr/">municipal boundaries</a>, address search via the
           <a href="https://adresse.data.gouv.fr/">Base Adresse Nationale</a>.
-          Données calculées publiées sous licence <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL</a>, code sous licence MIT.
+          Computed data published under the <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL</a> license, code under the MIT license.
         </p>
       </div>
     </footer>
-    <!-- Cloudflare Web Analytics (sans cookie). "spa": false : les mises à jour de l'URL ne comptent pas comme des pages vues. -->
+    <!-- Cloudflare Web Analytics (cookie-free). "spa": false: URL updates don't count as page views. -->
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "1904c17ed0624c0cab4d69ea1bacc5e7", "spa": false}'></script>
   </body>
 </html>

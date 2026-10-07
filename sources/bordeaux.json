@@ -2,7 +2,7 @@
   "city": "Bordeaux",
   "builtAt": "2026-10-06T00:54:07+00:00",
   "referenceDate": "2026-11-05",
-  "serviceWindow": "7h–20h",
+  "serviceWindow": "7:00–20:00",
   "gtfs": {
     "network": "TBM",
     "dataset": "https://transport.data.gouv.fr/datasets/reseau-urbain-et-scolaire-tbm",
