@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the whole site: data of each city, pages, preview images, then a control table.
+"""Build the whole site: data of the city, pages, preview images, then a control line.
 
 Usage: python3 build.py [city …] [--fetch] [--no-og]
   (no city: all of them; --fetch: download the sources first; --no-og: keep the preview images)
