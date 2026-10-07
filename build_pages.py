@@ -502,7 +502,7 @@ def render_legal(cities: list[dict]) -> str:
         Contact: via the project's <a href="{GITHUB_URL}/issues">GitHub issues</a>.</p>
         <h2>About this site</h2>
         <p>This site is a fork of <a href="https://github.com/camilleroux/montpellier-temps-transport">montpellier-temps-transport</a>
-        by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>. The concept and the engineering are his work: the original idea
+        by <a href="https://github.com/camilleroux/montpellier-temps-transport">Camille Roux</a>. The concept and the engineering are his work: the original idea
         comes from Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>, later adapted to Paris
         by Jules Grandin, then extended by Camille Roux. This fork borrows that idea, keeps his build pipeline and map engine,
         and adds a Toronto context — TTC schedules, translated to English and reduced to a single city.</p>
