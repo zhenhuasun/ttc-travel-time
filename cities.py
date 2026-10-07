@@ -60,8 +60,7 @@ def load_city(slug: str) -> dict:
     return with_defaults(json.loads((CITIES_DIR / f"{slug}.json").read_text(encoding="utf-8")))
 
 
-def load_cities(include_rankings_only: bool = False) -> list[dict]:
-    """Cities with a map. Some cities may only appear in the rankings (`rankingsOnly`, with an `externalUrl` to their map)."""
+def load_cities() -> list[dict]:
+    """Cities with a map."""
     cities = [with_defaults(json.loads(path.read_text(encoding="utf-8"))) for path in CITIES_DIR.glob("*.json")]
-    cities = [city for city in cities if include_rankings_only or not city.get("rankingsOnly")]
     return sorted(cities, key=lambda city: city["order"])
