@@ -24,11 +24,8 @@ LINKEDIN_URL = "https://www.linkedin.com/in/camilleroux"
 BLUESKY_URL = "https://bsky.app/profile/camilleroux.com"
 AUTHOR_URL = "https://www.camilleroux.com/"
 SITE_NAME = "Within Tram Reach"
-ANALYTICS = (
-    '    <!-- Cloudflare Web Analytics (cookie-free). "spa": false: URL updates don\'t count as page views. -->\n'
-    '    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
-    "data-cf-beacon='{\"token\": \"1904c17ed0624c0cab4d69ea1bacc5e7\", \"spa\": false}'></script>"
-)
+PUBLISHER_NAME = "zhenhuasun"
+PUBLISHER_URL = "https://github.com/zhenhuasun"
 LICENCES = {
     "lo": ("Licence Ouverte 2.0", "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"),
     "odbl": ("ODbL", "https://opendatacommons.org/licenses/odbl/1-0/"),
@@ -101,7 +98,8 @@ def json_ld(data: dict) -> str:
     return '    <script type="application/ld+json">\n    ' + body.replace("\n", "\n    ") + "\n    </script>"
 
 
-def head(*, title: str, description: str, url: str, base: str, image: str | None, image_alt: str, published: str, graph: list) -> str:
+def head(*, title: str, description: str, url: str, base: str, image: str | None, image_alt: str, published: str, graph: list,
+         author_name: str = "Camille Roux", author_url: str = AUTHOR_URL) -> str:
     """<head> content shared by every page: SEO, social previews, structured data."""
     title_text = esc(title.split(" · ")[0])
     image_tags = (
@@ -126,8 +124,8 @@ def head(*, title: str, description: str, url: str, base: str, image: str | None
             f'    <link rel="icon" href="{base}favicon.svg" type="image/svg+xml" />',
             f'    <link rel="icon" href="{base}favicon-32.png" type="image/png" sizes="32x32" />',
             f'    <link rel="apple-touch-icon" href="{base}apple-touch-icon.png" />',
-            '    <meta name="author" content="Camille Roux" />',
-            f'    <link rel="author" href="{AUTHOR_URL}" />',
+            f'    <meta name="author" content="{esc(author_name)}" />',
+            f'    <link rel="author" href="{author_url}" />',
             '    <meta property="og:type" content="website" />',
             '    <meta property="og:locale" content="en_US" />',
             f'    <meta property="og:site_name" content="{SITE_NAME}" />',
@@ -135,7 +133,7 @@ def head(*, title: str, description: str, url: str, base: str, image: str | None
             f'    <meta property="og:description" content="{esc(description)}" />',
             f'    <meta property="og:url" content="{url}" />',
             *image_tags,
-            f'    <meta property="article:author" content="{AUTHOR_URL}" />',
+            f'    <meta property="article:author" content="{author_url}" />',
             f'    <meta property="article:published_time" content="{published}T08:00:00+02:00" />',
             '    <meta name="twitter:card" content="summary_large_image" />',
             f'    <meta name="twitter:title" content="{title_text}" />',
@@ -383,7 +381,6 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
         ),
         "header": header(base),
         "footer": footer(base, data_credit, city["geocoder"]),
-        "analytics": ANALYTICS,
         "base": base,
         "city_config": json.dumps(config, ensure_ascii=False).replace("</", "<\\/"),
         "original_map": original_map(city),
@@ -455,7 +452,6 @@ def render_home(template: Template, cities: list[dict]) -> str:
         ),
         "header": header("./"),
         "footer": footer("./", ""),
-        "analytics": ANALYTICS,
         "city_name": esc(city["name"]),
         "city_title": esc(city["title"]),
         "city_path": esc(city["path"]),
@@ -489,11 +485,19 @@ def render_legal(cities: list[dict]) -> str:
         for city in sorted(cities, key=lambda item: item["name"])
         for feed in gtfs_feeds(city)
     )
-    graph = [author_schema()]
+    graph = [
+        {
+            "@type": "Person",
+            "@id": PUBLISHER_URL + "#me",
+            "name": PUBLISHER_NAME,
+            "url": PUBLISHER_URL,
+            "sameAs": [PUBLISHER_URL],
+        }
+    ]
     return f"""<!doctype html>
 <html lang="en">
   <head>
-{head(title=f"Legal notice and licenses · {SITE_NAME}", description="Publisher, hosting, audience measurement and data licenses used by Within Tram Reach.", url=SITE_URL + "mentions-legales/", base="../", image=None, image_alt="", published="2026-10-05", graph=graph)}
+{head(title=f"Legal notice and licenses · {SITE_NAME}", description="Publisher, hosting, privacy and data licenses used by Within Tram Reach.", url=SITE_URL + "mentions-legales/", base="../", image=None, image_alt="", published="2026-10-05", graph=graph, author_name=PUBLISHER_NAME, author_url=PUBLISHER_URL)}
     <link rel="stylesheet" href="../styles.css?v={short_hash(SITE / 'styles.css')}" />
   </head>
   <body>
@@ -505,21 +509,26 @@ def render_legal(cities: list[dict]) -> str:
       <section class="section">
         <h1 class="page-title">Legal notice and licenses</h1>
         <h2>Publisher</h2>
-        <p>This site is published personally by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>. Contact: via
-        <a href="{AUTHOR_URL}contact/">the camilleroux.com contact page</a> or the project's <a href="{GITHUB_URL}/issues">GitHub issues</a>.</p>
+        <p>This site is published personally by <a href="{PUBLISHER_URL}" rel="author">{PUBLISHER_NAME}</a>.
+        Contact: via the project's <a href="{GITHUB_URL}/issues">GitHub issues</a>.</p>
+        <h2>About this site</h2>
+        <p>This site is a fork of <a href="https://github.com/camilleroux/montpellier-temps-transport">montpellier-temps-transport</a>
+        by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>. The concept and the engineering are his work: the original idea
+        comes from Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>, later adapted to Paris
+        by Jules Grandin, then extended by Camille Roux. This fork borrows that idea, keeps his build pipeline and map engine,
+        and adds a Toronto context — TTC schedules, translated to English and reduced to a single city.</p>
         <h2>Hosting</h2>
-        <p>GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.
-        Domain name managed by Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States.</p>
-        <h2>Audience measurement and personal data</h2>
-        <p>Traffic is measured with Cloudflare Web Analytics, with no cookies or personal identifiers. Trips are
-        computed in your browser: no location or address is stored. Address search queries the Base Adresse Nationale API
-        (adresse.data.gouv.fr) and, outside France, komoot's Photon API (photon.komoot.io, OpenStreetMap data).</p>
+        <p>GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.</p>
+        <h2>Personal data</h2>
+        <p>No audience measurement, no cookies, no personal identifiers. Trips are
+        computed in your browser: no location or address is stored. Address search queries
+        komoot's Photon API (photon.komoot.io, OpenStreetMap data).</p>
         <h2>Licenses</h2>
         <p>The code is published under the MIT license on <a href="{GITHUB_URL}">GitHub</a>. The computed data
         (<code>data/*.json</code>) are derived databases, published under the <a href="{ODBL_URL}">ODbL</a> license.
         Basemap and routes: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>
-        (ODbL). Municipal boundaries: <a href="https://geo.api.gouv.fr/">geo.api.gouv.fr</a> (Licence Ouverte) and, outside
-        France, OpenStreetMap administrative boundaries (ODbL).</p>
+        (ODbL); municipal boundary: OpenStreetMap administrative boundary (ODbL). Timetables: TTC GTFS,
+        <a href="https://open.toronto.ca/open-data-licence/">Open Government Licence – Toronto</a>.</p>
         <table class="lines-table">
           <caption>Timetables used for each city</caption>
           <thead><tr><th scope="col">City</th><th scope="col">Source</th><th scope="col">License</th><th scope="col">Downloaded on</th></tr></thead>
@@ -530,7 +539,6 @@ def render_legal(cities: list[dict]) -> str:
       </section>
     </main>
 {footer("../", "", "photon")}
-{ANALYTICS}
   </body>
 </html>
 """
