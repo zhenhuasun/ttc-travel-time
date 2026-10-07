@@ -105,12 +105,6 @@ def json_ld(data: dict) -> str:
 
 def head(*, title: str, description: str, url: str, base: str, image: str, image_alt: str, published: str, graph: list) -> str:
     """<head> content shared by every page: SEO, social previews, structured data."""
-    redirect = (
-        "    <script>\n"
-        "      // Old github.io links: redirect to the site domain, keeping origin and destination.\n"
-        f'      if (location.hostname.endsWith("github.io")) location.replace("{url}" + location.search);\n'
-        "    </script>"
-    )
     title_text = esc(title.split(" · ")[0])
     return "\n".join(
         [
@@ -118,7 +112,6 @@ def head(*, title: str, description: str, url: str, base: str, image: str, image
             '    <meta name="viewport" content="width=device-width, initial-scale=1" />',
             f"    <title>{esc(title)}</title>",
             f'    <meta name="description" content="{esc(description)}" />',
-            redirect,
             f'    <link rel="canonical" href="{url}" />',
             '    <meta name="theme-color" content="#3aa70b" />',
             f'    <link rel="icon" href="{base}favicon.svg" type="image/svg+xml" />',
