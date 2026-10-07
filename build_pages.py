@@ -19,7 +19,7 @@ from cities import load_cities
 
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "site"
-SITE_URL = "https://tram.camilleroux.com/"
+SITE_URL = "https://zhenhuasun.github.io/ttc-travel-time/"
 GITHUB_URL = "https://github.com/camilleroux/montpellier-temps-transport"
 X_URL = "https://x.com/CamilleRoux"
 LINKEDIN_URL = "https://www.linkedin.com/in/camilleroux"
