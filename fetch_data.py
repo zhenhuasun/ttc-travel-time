@@ -19,7 +19,7 @@ from pathlib import Path
 from cities import load_city
 
 ROOT = Path(__file__).resolve().parent
-USER_AGENT = "tram.camilleroux.com/0.2 (build script)"
+USER_AGENT = "zhenhuasun.github.io/ttc-travel-time (build script)"
 OVERPASS_URLS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
