@@ -149,9 +149,6 @@ def header(base: str) -> str:
     return f"""    <header class="topbar">
       <nav class="topbar-inner" aria-label="Main navigation">
         <a class="brand" href="{base}"><img src="{base}favicon.svg" width="22" height="22" alt="" /> {SITE_NAME}</a>
-        <div class="topbar-links">
-          <a class="topbar-link" href="{AUTHOR_URL}" rel="author">camilleroux.com</a>
-        </div>
       </nav>
     </header>"""
 
@@ -160,10 +157,9 @@ def footer(base: str, data_credit: str, geocoder: str = "ban") -> str:
     return f"""    <footer class="site-footer">
       <div class="footer-inner">
         <p class="footer-author">
-          A project by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, developer and co-founder of Human Coders,
-          in Montpellier, based on the idea by Anthony Castrio and Jules Grandin. See
-          <a href="{AUTHOR_URL}realisations/">his other projects</a> and his
-          <a href="{AUTHOR_URL}veille/">weekly tech watch</a>.
+          Forked from <a href="https://github.com/camilleroux/montpellier-temps-transport">montpellier-temps-transport</a>
+          by Camille Roux — the concept and engineering are his work, based on the idea by Anthony Castrio and
+          Jules Grandin. This Toronto edition is published by <a href="{PUBLISHER_URL}" rel="author">zhenhuasun</a>.
         </p>
         <p class="footer-links">
           <a href="{GITHUB_URL}" rel="noopener">Source code on GitHub</a> ·
@@ -203,16 +199,15 @@ def credits_entry(question: str) -> tuple:
     """« Who made this? »: the original authors first, then the author of these maps."""
     text = (
         "The idea comes from Anthony Castrio's NYC Transit Time Cartogram, later adapted to Paris by Jules Grandin "
-        '("C\'est encore loin ?"). These maps are made by Camille Roux, developer and co-founder of Human '
-        "Coders in Montpellier, who showcases his other projects and his weekly tech watch on camilleroux.com. The "
-        "code is open on GitHub."
+        '("C\'est encore loin ?"), then extended by Camille Roux \u2014 the concept and engineering are his work. '
+        "This Toronto edition is a fork by zhenhuasun, using TTC schedules. The code is open on GitHub."
     )
     html_text = (
         'The idea comes from <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> by Anthony Castrio, later '
         'adapted to Paris by Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C\'est encore '
-        f'loin&nbsp;?</a>). These maps are made by <a href="{AUTHOR_URL}" rel="author">Camille Roux</a>, developer '
-        f'and co-founder of Human Coders in Montpellier: see <a href="{AUTHOR_URL}realisations/">his other '
-        f'projects</a> and <a href="{AUTHOR_URL}veille/">his weekly tech watch</a>. The code is open on '
+        f'loin&nbsp;?</a>), then extended by <a href="https://github.com/camilleroux/montpellier-temps-transport">Camille Roux</a> '
+        '\u2014 the concept and engineering are his work. This Toronto edition is a fork by '
+        f'<a href="{PUBLISHER_URL}">zhenhuasun</a>, using TTC schedules. The code is open on '
         f'<a href="{GITHUB_URL}">GitHub</a>.'
     )
     return (question, text, html_text)
@@ -221,20 +216,10 @@ def credits_entry(question: str) -> tuple:
 def author_schema() -> dict:
     return {
         "@type": "Person",
-        "@id": AUTHOR_URL + "#me",
-        "name": "Camille Roux",
-        "url": AUTHOR_URL,
-        "image": AUTHOR_URL + "content/images/size/w256h256/format/jpeg/2025/05/camillecouleur---lowres-2.jpg",
-        "jobTitle": "Developer, co-founder of Human Coders",
-        "worksFor": {"@type": "Organization", "name": "Human Coders", "url": "https://www.humancoders.com/"},
-        "address": {"@type": "PostalAddress", "addressLocality": "Montpellier", "addressCountry": "FR"},
-        "sameAs": [
-            LINKEDIN_URL,
-            X_URL,
-            BLUESKY_URL,
-            "https://mastodon.social/@camilleroux",
-            "https://github.com/camilleroux",
-        ],
+        "@id": PUBLISHER_URL + "#me",
+        "name": PUBLISHER_NAME,
+        "url": PUBLISHER_URL,
+        "sameAs": [PUBLISHER_URL],
     }
 
 
@@ -322,7 +307,7 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
             "applicationCategory": "TravelApplication",
             "operatingSystem": "Web",
             "isAccessibleForFree": True,
-            "author": {"@id": AUTHOR_URL + "#me"},
+            "author": {"@id": PUBLISHER_URL + "#me"},
             "spatialCoverage": {"@type": "Place", "name": city["metropole"]},
             "isBasedOn": ["https://castrio.me/nyc/", "https://julesgrandin.github.io/paris-temps-transport/"],
             "datePublished": city["published"],
@@ -378,6 +363,8 @@ def render_city(template: Template, cities: list[dict], city: dict) -> str:
             image_alt=city["ogAlt"],
             published=city["published"],
             graph=graph,
+            author_name=PUBLISHER_NAME,
+            author_url=PUBLISHER_URL,
         ),
         "header": header(base),
         "footer": footer(base, data_credit, city["geocoder"]),
@@ -434,7 +421,7 @@ def render_home(template: Template, cities: list[dict]) -> str:
             "url": SITE_URL,
             "description": description,
             "inLanguage": "en",
-            "author": {"@id": AUTHOR_URL + "#me"},
+            "author": {"@id": PUBLISHER_URL + "#me"},
         },
         faq_schema(faq),
         author_schema(),
@@ -449,6 +436,8 @@ def render_home(template: Template, cities: list[dict]) -> str:
             image_alt="",
             published=city["published"],
             graph=graph,
+            author_name=PUBLISHER_NAME,
+            author_url=PUBLISHER_URL,
         ),
         "header": header("./"),
         "footer": footer("./", ""),
