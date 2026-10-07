@@ -15,15 +15,6 @@ ${header}
 
       <section class="hero">
         <h1>${headline}</h1>
-        <div id="cityPanel" class="city-panel" role="dialog" aria-label="Choose a city" hidden>
-          <div class="city-panel-head">
-            <input id="citySearch" type="search" placeholder="Search for a city…" aria-label="Search for a city" autocomplete="off" />
-            <button id="cityClose" type="button" class="icon-button" aria-label="Close">×</button>
-          </div>
-          <nav class="city-panel-list" aria-label="Cities">
-${city_items}
-          </nav>
-        </div>
         <p class="lede">
           The city redrawn by how long it takes to get around by ${rail_noun}. Pick a start point: the map is
           colored by travel time to each point ${area}.
@@ -122,20 +113,11 @@ ${stat_tiles}
 ${line_rows}
           </tbody>
         </table>
-${ranking_positions}
       </section>
 
       <section class="section" aria-labelledby="faq-title">
         <h2 id="faq-title">Frequently asked questions</h2>
 ${faq_html}
-      </section>
-
-      <section class="section" aria-labelledby="cities-title">
-        <h2 id="cities-title">Other cities</h2>
-        <div class="city-grid">
-${other_cities}
-        </div>
-${follow}
       </section>
     </main>
 
