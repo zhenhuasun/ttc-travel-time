@@ -1281,6 +1281,14 @@ output {
   color: var(--muted);
 }
 
+.footer-disclaimer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 .toast {
   position: fixed;
   left: 50%;
