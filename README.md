@@ -68,6 +68,11 @@ The Toronto adaptation includes:
 
 Additional development and maintenance by Zhenhu Sun.
 
+## Disclaimer
+This is an independent personal project created using publicly available open data.
+
+Views, analyses, and conclusions presented here are solely those of the author and do not represent the views of any employer, transportation agency, government organization, or affiliated institution.
+
 ## Licenses
 
 - Code: MIT license (see [LICENSE](LICENSE)), inherited from the upstream project.
