@@ -282,16 +282,25 @@
         <details class="faq"><summary>Where do the timetables used come from?</summary><p>From the scheduled timetables published by the TTC network (GTFS format, Open Government Licence – Toronto), downloaded on 7 October 2026 and valid until 31 October 2026. Travel times are for Thursday 8 October 2026, between 7 a.m. and 8 p.m.</p></details>
         <details class="faq"><summary>Are buses included in Toronto?</summary><p>Yes, optionally: check &quot;Bus&quot; under the map. By default, only subway and streetcar are shown. Waiting time at infrequent bus stops is capped at 15 minutes.</p></details>
         <details class="faq"><summary>How are travel times calculated?</summary><p>For each trip: walk to the stop at 4.5 km/h, waiting time equal to half the interval between two services, scheduled time between stops, transfers with 1.5 minutes of walking, plus 1 minute to reach the subway platform. No real-time data or disruptions: this is the city &quot;on paper&quot;.</p></details>
-        <details class="faq"><summary>Who made this map of Toronto?</summary><p>The idea comes from <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> by Anthony Castrio, later adapted to Paris by Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>), then extended by <a href="https://github.com/camilleroux/montpellier-temps-transport">Camille Roux</a> — the concept and engineering are his work. This Toronto edition is a fork by <a href="https://github.com/zhenhuasun">zhenhuasun</a>, using TTC schedules. The code is open on <a href="https://github.com/zhenhuasun/ttc-travel-time">GitHub</a>.</p></details>
+        <details class="faq"><summary>Who made this map of Toronto?</summary>
+          <p>The Toronto by Transit was created by <a href="https://github.com/zhenhuasun">Joshua Sun</a>, using TTC schedules.
+            The code is open on <a href="https://github.com/zhenhuasun/ttc-travel-time">GitHub</a>.
+            The idea comes from <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a> by Anthony Castrio, 
+            later adapted to Paris by Jules Grandin (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>), 
+            then extended by <a href="https://github.com/camilleroux/montpellier-temps-transport">Camille Roux</a> — the concept and engineering are his work.  
+          </p>
+        </details>
+This Toronto edition was created by Joshua Sun using TTC schedule data. The idea comes from NYC Transit Time Cartogram by Anthony Castrio, later adapted to Paris by Jules Grandin (C'est encore loin ?), then extended by Camille Roux — the concept and engineering are his work. The code is open on GitHub.
+        
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="footer-inner">
         <p class="footer-author">
+          The Toronto by Transit was created by <a href="https://github.com/zhenhuasun">Joshua Sun</a>. 
           Forked from <a href="https://github.com/camilleroux/montpellier-temps-transport">montpellier-temps-transport</a>
-          by Camille Roux — the concept and engineering are his work, based on the idea by Anthony Castrio and
-          Jules Grandin. This Toronto edition is published by <a href="https://github.com/zhenhuasun" rel="author">zhenhuasun</a>.
+          by Camille Roux — the concept and engineering are his work, based on the idea by Anthony Castrio and Jules Grandin. 
         </p>
         <p class="footer-links">
           <a href="https://github.com/zhenhuasun/ttc-travel-time" rel="noopener">Source code on GitHub</a> ·
@@ -300,8 +309,10 @@
         </p>
         <p class="footer-credits">
           Original idea: Anthony Castrio's <a href="https://castrio.me/nyc/">NYC Transit Time Cartogram</a>,
-          later adapted to Paris by Jules Grandin
-          (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>).
+          later developed by Jules Grandin
+          (<a href="https://julesgrandin.github.io/paris-temps-transport/">C'est encore loin&nbsp;?</a>)
+          and by Camille Roux
+          (<a href="https://tram.camilleroux.com/">À portée de tram</a>).
           Timetables: <a href="https://open.toronto.ca/dataset/ttc-routes-and-schedules">GTFS TTC</a> (City of Toronto). Basemap © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>,
           OpenStreetMap administrative boundaries, address search via
           <a href="https://photon.komoot.io/">Photon</a> (komoot, OpenStreetMap data).
