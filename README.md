@@ -51,6 +51,23 @@ Times come from GTFS schedules for a typical school-week Tuesday or Thursday, 7 
 
 No real-time data or disruptions.
 
+## Credits
+
+Toronto by Transit is based on the Montpellier Temps Transport project created by Camille Roux.
+
+Original repository:
+https://github.com/camilleroux/montpellier-temps-transport
+
+The Toronto adaptation includes:
+
+- TTC GTFS integration
+- Toronto-specific travel-time datasets
+- English localization
+- Toronto-focused branding and visual design
+- GitHub Pages deployment
+
+Additional development and maintenance by Zhenhu Sun.
+
 ## Licenses
 
 - Code: MIT license (see [LICENSE](LICENSE)), inherited from the upstream project.
