@@ -166,7 +166,7 @@ a {
 
 .city-trigger:hover,
 .city-trigger[aria-expanded="true"] {
-  background: var(--ttc-red-soft);
+  background: var(--ttc-red-strong);
 }
 
 .city-trigger svg {
