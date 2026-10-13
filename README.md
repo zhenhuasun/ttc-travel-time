@@ -60,9 +60,7 @@ The Toronto adaptation includes:
 
 - TTC GTFS integration
 - Toronto-specific travel-time datasets
-- English localization
 - Toronto-focused branding and visual design
-- GitHub Pages deployment
 
 Additional development and maintenance by Zhenhu Sun.
 
